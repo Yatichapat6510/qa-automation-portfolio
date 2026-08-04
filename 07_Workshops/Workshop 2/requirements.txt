@@ -1,0 +1,13 @@
+# QA Workshop - Python Playwright Dependencies
+
+# Playwright Python library
+playwright>=1.44.0
+
+# pytest test runner
+pytest>=8.0.0
+
+# pytest-playwright plugin (ช่วยเรื่อง fixture browser/page)
+pytest-playwright>=0.5.0
+
+# HTML Report (optional)
+pytest-html>=4.0.0

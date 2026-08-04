@@ -1,0 +1,440 @@
+{
+  "info": {
+    "name": "🎓 Beginner API Testing - JSONPlaceholder",
+    "description": "แบบฝึกหัด API Testing ด้วย Postman สำหรับมือใหม่\n\n🎯 เป้าหมาย: https://jsonplaceholder.typicode.com\n📖 เป็น Free Public API ไม่ต้อง Login ใช้ได้ทันที\n\n📚 วิธีใช้:\n1. Import ไฟล์นี้เข้า Postman (File > Import)\n2. เริ่มจาก STEP 1 ไปตามลำดับ\n3. อ่าน Description ของแต่ละ Request ก่อนรัน\n4. ดูผลใน Tests tab หลังรัน\n\n📦 โครงสร้างข้อมูล:\n  - Posts: บทความ (100 รายการ)\n  - Users: ผู้ใช้ (10 รายการ)\n  - Comments: ความคิดเห็น\n  - Todos: รายการสิ่งที่ต้องทำ",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://jsonplaceholder.typicode.com",
+      "description": "URL หลักของ API"
+    }
+  ],
+  "item": [
+    {
+      "name": "📘 STEP 1 - รู้จัก GET Request",
+      "description": "GET = ขอดูข้อมูล (ไม่ได้แก้ไขอะไร)\nเหมือนการเปิดอ่านหนังสือในห้องสมุด",
+      "item": [
+        {
+          "name": "1A: ดูบทความทั้งหมด (GET /posts)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// ================================================",
+                  "// 📝 TESTS คืออะไร?",
+                  "// Test คือการตรวจสอบว่า API ตอบกลับถูกต้องหรือไม่",
+                  "// pm.test(ชื่อ test, function() { ... })",
+                  "// ================================================",
+                  "",
+                  "// Test 1: ตรวจสอบ Status Code",
+                  "// 200 = สำเร็จ (OK)",
+                  "pm.test(\"✅ Status code ต้องเป็น 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Test 2: ตรวจสอบว่า Response เป็น Array",
+                  "pm.test(\"✅ Response ต้องเป็น Array (รายการ)\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Test 3: ตรวจสอบจำนวน",
+                  "pm.test(\"✅ ต้องมีบทความ 100 รายการ\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.length).to.eql(100);",
+                  "});",
+                  "",
+                  "// Test 4: ตรวจสอบโครงสร้างข้อมูล",
+                  "pm.test(\"✅ บทความแรกต้องมีฟิลด์ครบ\", function () {",
+                  "    var firstPost = pm.response.json()[0];",
+                  "    pm.expect(firstPost).to.have.property('id');",
+                  "    pm.expect(firstPost).to.have.property('title');",
+                  "    pm.expect(firstPost).to.have.property('body');",
+                  "    pm.expect(firstPost).to.have.property('userId');",
+                  "});",
+                  "",
+                  "// Test 5: ตรวจ Response Time",
+                  "pm.test(\"✅ ตอบกลับภายใน 3 วินาที\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/posts",
+            "description": "📖 อธิบาย:\nRequest นี้จะดึงบทความทั้งหมด 100 รายการ\n\n🔍 ลองสังเกต:\n- Status Code ที่มุมขวาบน (ควรเป็น 200 OK)\n- Response Time (เวลาที่ใช้)\n- ขนาดข้อมูล (Size)\n\n📊 โครงสร้างข้อมูลที่ได้:\n[\n  {\n    \"userId\": 1,      ← เจ้าของบทความ\n    \"id\": 1,          ← รหัสบทความ\n    \"title\": \"...\",   ← หัวข้อ\n    \"body\": \"...\"     ← เนื้อหา\n  },\n  ...\n]"
+          }
+        },
+        {
+          "name": "1B: ดูบทความชิ้นที่ 1 (GET /posts/1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Status 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// ตรวจว่า ID ตรงกับที่ขอ",
+                  "pm.test(\"✅ ID ต้องเป็น 1\", function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.eql(1);",
+                  "});",
+                  "",
+                  "// ตรวจ Content-Type header",
+                  "pm.test(\"✅ Content-Type ต้องเป็น JSON\", function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "});",
+                  "",
+                  "// บันทึก title ไว้ดูใน Console",
+                  "var post = pm.response.json();",
+                  "console.log('📄 ชื่อบทความ:', post.title);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/posts/1",
+            "description": "📖 อธิบาย:\nเพิ่ม /1 ต่อท้าย URL เพื่อดูเฉพาะบทความชิ้นที่ 1\n\n💡 ลองเปลี่ยนเลข 1 เป็น 2, 3, 50 เพื่อดูบทความอื่น\n\n🔍 สังเกตความต่าง:\n- Request แรก: ได้ Array [...] มี 100 รายการ\n- Request นี้:  ได้ Object {...} รายการเดียว"
+          }
+        },
+        {
+          "name": "1C: ❌ ดูบทความที่ไม่มี (Negative Test)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// ============================================",
+                  "// 💡 Negative Test คืออะไร?",
+                  "// การทดสอบกรณีที่ไม่ถูกต้อง / ไม่มีข้อมูล",
+                  "// สำคัญมาก! ต้องทดสอบทั้ง 'ถูก' และ 'ผิด'",
+                  "// ============================================",
+                  "",
+                  "// เมื่อหาไม่เจอ ต้องได้ 404 Not Found",
+                  "pm.test(\"✅ ต้องได้ 404 เพราะไม่มีบทความ ID 99999\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"✅ Response body ต้องเป็น object ว่าง {}\", function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.eql({});",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/posts/99999",
+            "description": "📖 อธิบาย:\nทดสอบกรณีขอข้อมูลที่ไม่มีอยู่\n\n⚠️ Status Codes ที่ควรรู้:\n• 200 = สำเร็จ\n• 201 = สร้างสำเร็จ\n• 400 = ข้อมูลที่ส่งไปผิด\n• 404 = ไม่พบข้อมูล\n• 500 = Server มีปัญหา\n\n🎯 Expected: 404 Not Found"
+          }
+        },
+        {
+          "name": "1D: ดูบทความของ User คนที่ 1 (Filter)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Status 200\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"✅ ทุกบทความต้องเป็นของ userId = 1\", function () {",
+                  "    var posts = pm.response.json();",
+                  "    // ใช้ forEach วนดูทุก post",
+                  "    posts.forEach(function(post) {",
+                  "        pm.expect(post.userId).to.eql(1);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"✅ ต้องมี 10 บทความ\", function () {",
+                  "    pm.expect(pm.response.json().length).to.eql(10);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/posts?userId=1",
+              "query": [{ "key": "userId", "value": "1", "description": "กรอง userId" }]
+            },
+            "description": "📖 อธิบาย:\n? userId=1 คือ Query Parameter\nใช้กรองข้อมูลตามเงื่อนไข\n\n💡 ลองเปลี่ยน userId=1 เป็น 2, 3..."
+          }
+        }
+      ]
+    },
+    {
+      "name": "📗 STEP 2 - สร้างข้อมูลใหม่ (POST)",
+      "description": "POST = สร้างข้อมูลใหม่\nเหมือนการเขียนและส่งแบบฟอร์ม",
+      "item": [
+        {
+          "name": "2A: สร้างบทความใหม่ (POST /posts)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Pre-request Script รันก่อน Request",
+                  "// ใช้สร้าง dynamic data",
+                  "pm.variables.set('myTitle', 'บทความทดสอบ ' + new Date().toLocaleTimeString());",
+                  "console.log('🔧 Title ที่จะใช้:', pm.variables.get('myTitle'));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// POST สำเร็จต้องได้ 201 Created (ไม่ใช่ 200!)",
+                  "pm.test(\"✅ Status 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"✅ Response มี ID ใหม่\", function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('id');",
+                  "    pm.expect(json.id).to.be.a('number');",
+                  "    console.log('🆔 ID ที่ได้:', json.id);",
+                  "    // บันทึก ID ไว้ใช้ในขั้นตอนถัดไป",
+                  "    pm.collectionVariables.set('newPostId', json.id);",
+                  "});",
+                  "",
+                  "pm.test(\"✅ Title ตรงกับที่ส่งไป\", function () {",
+                  "    var json = pm.response.json();",
+                  "    var sentBody = JSON.parse(pm.request.body.raw);",
+                  "    pm.expect(json.title).to.eql(sentBody.title);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "บอก Server ว่าส่งข้อมูลแบบ JSON"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"{{myTitle}}\",\n  \"body\": \"นี่คือเนื้อหาของบทความทดสอบ\",\n  \"userId\": 1\n}"
+            },
+            "url": "{{base_url}}/posts",
+            "description": "📖 อธิบาย:\nส่งข้อมูล JSON ใน Body เพื่อสร้างบทความใหม่\n\n⚠️ สำคัญ:\n• ต้องใส่ Header: Content-Type: application/json\n• POST ไป URL เดิม (ไม่มี /ID)\n• Response: 201 Created + ข้อมูลที่สร้าง + ID ใหม่\n\n📌 JSONPlaceholder เป็น Mock API\nข้อมูลที่ส่งจะไม่ถูกบันทึกจริง แต่ Response จะเหมือนของจริง"
+          }
+        },
+        {
+          "name": "2B: ส่งข้อมูลไม่ครบ (POST - Validation Test)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// ⚠️ หมายเหตุ: JSONPlaceholder ไม่ validate จริง",
+                  "// แต่ใน Real API จะได้ 400 Bad Request",
+                  "// บันทึกไว้เพื่อเรียนรู้รูปแบบการ test",
+                  "",
+                  "pm.test(\"📌 JSONPlaceholder ยอมรับ request ที่ไม่สมบูรณ์ (201)\", function () {",
+                  "    // Real API ควรได้ 400",
+                  "    pm.expect(pm.response.code).to.be.oneOf([201, 400]);",
+                  "    console.log('💡 Status code:', pm.response.code);",
+                  "    console.log('💡 Real API จะต้องได้ 400 Bad Request');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"body\": \"ส่งแค่ body ไม่มี title\"\n}"
+            },
+            "url": "{{base_url}}/posts",
+            "description": "📖 อธิบาย:\nทดสอบส่งข้อมูลไม่ครบ (ไม่มี title และ userId)\n\n🎯 ใน Real API ควรได้:\n• Status: 400 Bad Request\n• Message: 'title is required'\n\n💡 JSONPlaceholder เป็น Mock จึงไม่ Validate\nแต่เราเรียนรู้ Pattern การ Test"
+          }
+        }
+      ]
+    },
+    {
+      "name": "📙 STEP 3 - แก้ไขข้อมูล (PUT/PATCH)",
+      "description": "PUT = แก้ไขข้อมูลทั้งหมด\nPATCH = แก้ไขบางส่วน",
+      "item": [
+        {
+          "name": "3A: แก้ไขบทความทั้งหมด (PUT /posts/1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Status 200\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"✅ Title ถูกอัปเดต\", function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.title).to.eql('หัวข้อที่แก้ไขใหม่');",
+                  "});",
+                  "",
+                  "pm.test(\"✅ ID ยังเหมือนเดิม\", function () {",
+                  "    pm.expect(pm.response.json().id).to.eql(1);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"title\": \"หัวข้อที่แก้ไขใหม่\",\n  \"body\": \"เนื้อหาที่แก้ไขใหม่\",\n  \"userId\": 1\n}"
+            },
+            "url": "{{base_url}}/posts/1",
+            "description": "📖 PUT vs PATCH:\n• PUT = ส่งข้อมูลทั้งหมด (Replace)\n• PATCH = ส่งเฉพาะที่ต้องการแก้ (Update)\n\n⚠️ URL มี /1 เพื่อระบุว่าแก้ไข Post ID 1"
+          }
+        },
+        {
+          "name": "3B: แก้ไขบางส่วน (PATCH /posts/1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Status 200\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"✅ Title ถูกอัปเดต\", function () {",
+                  "    pm.expect(pm.response.json().title).to.eql('เฉพาะหัวข้อที่แก้');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"เฉพาะหัวข้อที่แก้\"\n}"
+            },
+            "url": "{{base_url}}/posts/1",
+            "description": "PATCH ส่งแค่ field ที่ต้องการแก้\nไม่ต้องส่งข้อมูลทั้งหมดเหมือน PUT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "📕 STEP 4 - ลบข้อมูล (DELETE)",
+      "item": [
+        {
+          "name": "4A: ลบบทความ (DELETE /posts/1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Status 200 หลังลบ\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"✅ Response body ว่าง {}\", function () {",
+                  "    pm.expect(pm.response.json()).to.eql({});",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/posts/1",
+            "description": "📖 DELETE ลบข้อมูล\nไม่ต้องส่ง Body\nระบุ ID ใน URL\n\n⚠️ JSONPlaceholder = Fake Delete\nในของจริง หลัง DELETE แล้ว GET จะได้ 404"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏆 STEP 5 - แบบฝึกหัด (ทำเอง!)",
+      "description": "ลองทำด้วยตัวเอง! แต่ละ request มีโจทย์ให้ทำ",
+      "item": [
+        {
+          "name": "QUIZ 1: ดู Todo ทั้งหมด (แก้ URL ด้วยตัวเอง)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// 🎯 โจทย์: แก้ URL ให้ดึง /todos ได้ถูกต้อง",
+                  "// จากนั้นแก้ test ด้านล่างให้ผ่านทั้งหมด",
+                  "",
+                  "pm.test(\"QUIZ: Status 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"QUIZ: ต้องมี 200 todos\", function () {",
+                  "    // แก้ตัวเลขนี้ให้ถูกต้อง",
+                  "    pm.expect(pm.response.json().length).to.eql(200);",
+                  "});",
+                  "",
+                  "pm.test(\"QUIZ: todo แรกมี field 'completed'\", function () {",
+                  "    // ✏️ แก้ field name ให้ถูกต้อง",
+                  "    pm.expect(pm.response.json()[0]).to.have.property('completed');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/todos",
+            "description": "🎯 โจทย์:\n1. URL ถูกแล้ว แต่ลอง inspect ข้อมูลที่ได้\n2. แก้ไข test ให้ตรวจ field 'title' ด้วย\n3. เพิ่ม test ตรวจว่า completed เป็น boolean\n\n💡 Hint: ดูโครงสร้าง Todo ใน Response Body"
+          }
+        },
+        {
+          "name": "QUIZ 2: ดู Comments ของ Post 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"QUIZ: Status 200\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"QUIZ: ทุก comment เป็นของ postId=1\", function () {",
+                  "    var comments = pm.response.json();",
+                  "    comments.forEach(function(c) {",
+                  "        pm.expect(c.postId).to.eql(1);",
+                  "    });",
+                  "});",
+                  "",
+                  "// 🎯 โจทย์: เพิ่ม test เพื่อตรวจว่า email ใน comments เป็นรูปแบบ email จริง",
+                  "pm.test(\"QUIZ: ✏️ email ต้องมี @ symbol\", function () {",
+                  "    var comments = pm.response.json();",
+                  "    comments.forEach(function(c) {",
+                  "        pm.expect(c.email).to.include('@'); // เพิ่ม assertion ที่นี่",
+                  "    });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/posts/1/comments",
+              "description": "ดู comments ของ post 1 โดยตรง (nested route)"
+            },
+            "description": "💡 Nested Route:\n/posts/1/comments = comments ทั้งหมดของ post 1\n\nหรือจะใช้:\n/comments?postId=1\nก็ได้ผลเหมือนกัน"
+          }
+        }
+      ]
+    }
+  ]
+}

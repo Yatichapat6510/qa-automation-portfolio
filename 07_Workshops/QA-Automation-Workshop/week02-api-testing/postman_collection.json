@@ -1,0 +1,305 @@
+{
+  "info": {
+    "name": "QA Workshop - Demo API",
+    "_postman_id": "qa-workshop-demo",
+    "description": "Collection สำหรับฝึก API Testing ใน Workshop",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:5000" },
+    { "key": "token",    "value": "test-token-123" }
+  ],
+  "item": [
+    {
+      "name": "1. Health Check",
+      "item": [
+        {
+          "name": "GET /health",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/health"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Status is ok', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.status).to.equal('ok');",
+                  "});",
+                  "pm.test('Has version', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('version');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Authentication",
+      "item": [
+        {
+          "name": "POST /api/login - Success",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password123\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Login returns 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Response has token', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('token');",
+                  "  pm.environment.set('token', body.token);",
+                  "});",
+                  "pm.test('Success is true', () => {",
+                  "  pm.expect(pm.response.json().success).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /api/login - Wrong Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"wrongpass\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Wrong password returns 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Users",
+      "item": [
+        {
+          "name": "GET /api/users - All",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/users",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Response has data array', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('data');",
+                  "  pm.expect(body.data).to.be.an('array');",
+                  "});",
+                  "pm.test('Response has total', () => {",
+                  "  pm.expect(pm.response.json()).to.have.property('total');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /api/users/1 - Single",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/users/1",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('User id is 1', () => {",
+                  "  pm.expect(pm.response.json().id).to.equal('1');",
+                  "});",
+                  "pm.test('Has name and email', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('name');",
+                  "  pm.expect(body).to.have.property('email');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /api/users/9999 - Not Found",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/users/9999",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 404', () => pm.response.to.have.status(404));",
+                  "pm.test('Has error message', () => {",
+                  "  pm.expect(pm.response.json()).to.have.property('error');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /api/users - Create",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/users",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{$randomFullName}}\",\n  \"email\": \"{{$randomEmail}}\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('User has id', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('id');",
+                  "  pm.environment.set('created_user_id', body.id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Products",
+      "item": [
+        {
+          "name": "GET /api/products - All",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/products"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has products', () => {",
+                  "  pm.expect(pm.response.json().data.length).to.be.above(0);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /api/products?category=Electronics",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/products?category=Electronics",
+              "query": [{ "key": "category", "value": "Electronics" }]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('All products are Electronics', () => {",
+                  "  const products = pm.response.json().data;",
+                  "  products.forEach(p => {",
+                  "    pm.expect(p.category).to.equal('Electronics');",
+                  "  });",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Search",
+      "item": [
+        {
+          "name": "GET /api/search?q=laptop",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/search?q=laptop",
+              "query": [{ "key": "q", "value": "laptop" }]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Found results', () => {",
+                  "  pm.expect(pm.response.json().count).to.be.above(0);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /api/search - No Query",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/search"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 when no query', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

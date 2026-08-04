@@ -1,0 +1,67 @@
+name: Robot Framework Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  robot-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install robotframework
+          pip install robotframework-seleniumlibrary
+          pip install robotframework-requests
+          pip install webdriver-manager
+
+      - name: Setup Chrome (headless)
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Run Robot Framework Tests
+        run: |
+          cd "Practice writing code for QA_Projects/06_Robot-Framework/FirstRobot.robot"
+          robot --outputdir results \
+                --variable BROWSER:headlesschrome \
+                --variable BASE_URL:${{ secrets.STM_BASE_URL }} \
+                tests/
+        continue-on-error: true
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: robot-results-${{ github.run_number }}
+          path: |
+            **/results/log.html
+            **/results/report.html
+            **/results/output.xml
+
+      - name: Publish Robot Framework Results
+        uses: joonvena/robotframework-reporter-action@v2.3
+        if: always()
+        with:
+          gh_access_token: ${{ secrets.GITHUB_TOKEN }}
+          report_path: '**/results'
+
+      - name: Notify Slack on Failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1.27
+        with:
+          payload: |
+            {
+              "text": "❌ Robot Framework Tests FAILED on ${{ github.ref_name }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

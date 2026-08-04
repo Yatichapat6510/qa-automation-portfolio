@@ -1,0 +1,169 @@
+name: 🎓 QA Workshop - Beginner Test Suite
+
+# ─────────────────────────────────────────
+# Trigger: เมื่อไหร่ให้รัน?
+# ─────────────────────────────────────────
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+# ─────────────────────────────────────────
+# Environment Variables ใช้ร่วมกัน
+# ─────────────────────────────────────────
+env:
+  API_URL:  https://jsonplaceholder.typicode.com
+  WEB_URL:  https://www.saucedemo.com
+
+jobs:
+
+  # ═══════════════════════════════════════
+  # JOB 1: API Tests (Postman/Newman)
+  # ═══════════════════════════════════════
+  api-tests:
+    name: "🔵 API Tests (Newman)"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 📦 ติดตั้ง Newman
+        run: npm install -g newman newman-reporter-htmlextra
+
+      - name: 🧪 รัน Postman Collection
+        run: |
+          newman run postman/beginner_postman_collection.json \
+            --env-var "base_url=${{ env.API_URL }}" \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export results/api-report.html \
+            --reporter-htmlextra-title "QA Workshop - API Tests"
+
+      - name: 📤 Upload Report
+        uses: actions/upload-artifact@v4
+        if: always()  # อัปโหลดแม้ Test ล้มเหลว
+        with:
+          name: api-test-report
+          path: results/api-report.html
+
+  # ═══════════════════════════════════════
+  # JOB 2: UI Tests (Playwright)
+  # ═══════════════════════════════════════
+  ui-tests:
+    name: "🟣 UI Tests (Playwright)"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔧 ติดตั้ง Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 📦 ติดตั้ง Dependencies
+        working-directory: playwright
+        run: |
+          # สร้าง package.json ถ้ายังไม่มี
+          [ -f package.json ] || npm init -y
+          npm install --save-dev @playwright/test typescript
+
+      - name: 🌐 ติดตั้ง Playwright Browsers
+        working-directory: playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: 🧪 รัน Playwright Tests
+        working-directory: playwright
+        run: npx playwright test --reporter=html
+        env:
+          CI: true
+
+      - name: 📤 Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright/playwright-report/
+
+  # ═══════════════════════════════════════
+  # JOB 3: Robot Framework Tests
+  # ═══════════════════════════════════════
+  robot-tests:
+    name: "🟡 Web Tests (Robot Framework)"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔧 ติดตั้ง Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 ติดตั้ง Robot Framework
+        run: |
+          pip install \
+            robotframework \
+            robotframework-seleniumlibrary \
+            webdrivermanager
+          webdrivermanager chrome --linkpath /usr/local/bin
+
+      - name: 🧪 รัน Robot Framework (Smoke Tests เท่านั้น)
+        run: |
+          robot \
+            --outputdir  results/robot \
+            --variable   BROWSER:headlesschrome \
+            --variable   BASE_URL:${{ env.WEB_URL }} \
+            --include    smoke \
+            --loglevel   INFO \
+            robot-framework/tests/web_tests.robot
+        continue-on-error: true
+
+      - name: 📤 Upload Robot Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: robot-report
+          path: results/robot/
+
+  # ═══════════════════════════════════════
+  # JOB 4: SQL Validation
+  # ═══════════════════════════════════════
+  sql-tests:
+    name: "🟠 SQL Validation"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🗄️ รัน SQL Script
+        run: |
+          sqlite3 qa_beginner.db < sql/beginner_exercises.sql
+          echo "✅ SQL exercises completed successfully"
+
+  # ═══════════════════════════════════════
+  # JOB 5: Summary (รอทุก Job เสร็จ)
+  # ═══════════════════════════════════════
+  summary:
+    name: "📊 Test Summary"
+    runs-on: ubuntu-latest
+    needs: [api-tests, ui-tests, robot-tests, sql-tests]
+    if: always()
+
+    steps:
+      - name: สรุปผล
+        run: |
+          echo "## 📊 QA Workshop Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Tool | Job | ผลลัพธ์ |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-----|---------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔵 Postman/Newman | API Tests | ${{ needs.api-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🟣 Playwright | UI Tests | ${{ needs.ui-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🟡 Robot Framework | Web Tests | ${{ needs.robot-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🟠 SQL | Validation | ${{ needs.sql-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> 📱 Appium ต้องรันบน Device จริง ไม่รวมใน CI" >> $GITHUB_STEP_SUMMARY

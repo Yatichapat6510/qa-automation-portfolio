@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Secrets and local settings
+.env
+.env.*
+.claude/
+
+# Test artifacts and reports
+results/
+screenshots/
+test-results/
+playwright-report/
+blob-report/
+log.html
+report.html
+output.xml
+out*.txt
+
+# Python cache
+__pycache__/
+*.py[cod]

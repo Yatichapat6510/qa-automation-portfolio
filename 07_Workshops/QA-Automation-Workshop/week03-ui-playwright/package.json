@@ -1,0 +1,13 @@
+{
+  "name": "qa-workshop-playwright",
+  "version": "1.0.0",
+  "description": "Playwright tests for QA Workshop",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:report": "npx playwright test --reporter=html && npx playwright show-report",
+    "test:headed": "npx playwright test --headed"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0"
+  }
+}

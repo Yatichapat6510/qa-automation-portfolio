@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="🎓 Beginner Load Testing - JSONPlaceholder" enabled="true">
+      <stringProp name="TestPlan.comments">
+แบบฝึกหัด JMeter สำหรับมือใหม่
+Target: https://jsonplaceholder.typicode.com
+
+📚 ขั้นตอนการเรียนรู้:
+LAB 1: ส่ง Request ครั้งแรก (1 User)
+LAB 2: จำลองผู้ใช้หลายคน (5 Users)
+LAB 3: ตั้ง Assertion ตรวจผลลัพธ์
+LAB 4: ดู Report
+
+🛠️ วิธีเปิดใช้งาน:
+1. เปิดไฟล์นี้ใน JMeter: File > Open
+2. กด Run (ปุ่มเขียว ▶)
+3. ดูผลใน "View Results Tree"
+      </stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="HOST" elementType="Argument">
+            <stringProp name="Argument.name">HOST</stringProp>
+            <stringProp name="Argument.value">jsonplaceholder.typicode.com</stringProp>
+            <stringProp name="Argument.description">โดเมนของ API (ไม่มี https://)</stringProp>
+          </elementProp>
+          <elementProp name="PROTOCOL" elementType="Argument">
+            <stringProp name="Argument.name">PROTOCOL</stringProp>
+            <stringProp name="Argument.value">https</stringProp>
+          </elementProp>
+          <elementProp name="PORT" elementType="Argument">
+            <stringProp name="Argument.name">PORT</stringProp>
+            <stringProp name="Argument.value">443</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+    </TestPlan>
+    <hashTree>
+
+      <!-- HTTP Config ใช้ร่วมกันทั้งหมด -->
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement"
+        testname="⚙️ HTTP Request Defaults (ตั้งค่าเริ่มต้น)" enabled="true">
+        <stringProp name="HTTPSampler.domain">${HOST}</stringProp>
+        <stringProp name="HTTPSampler.port">${PORT}</stringProp>
+        <stringProp name="HTTPSampler.protocol">${PROTOCOL}</stringProp>
+        <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
+        <stringProp name="HTTPSampler.response_timeout">10000</stringProp>
+        <boolProp name="HTTPSampler.image_parser">false</boolProp>
+      </ConfigTestElement>
+      <hashTree/>
+
+      <!-- Header Manager -->
+      <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager"
+        testname="📋 HTTP Header Manager" enabled="true">
+        <collectionProp name="HeaderManager.headers">
+          <elementProp name="Accept" elementType="Header">
+            <stringProp name="Header.name">Accept</stringProp>
+            <stringProp name="Header.value">application/json</stringProp>
+          </elementProp>
+        </collectionProp>
+      </HeaderManager>
+      <hashTree/>
+
+      <!-- ===================================================== -->
+      <!-- LAB 1: ผู้ใช้คนเดียว - เรียนรู้พื้นฐาน              -->
+      <!-- ===================================================== -->
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup"
+        testname="📘 LAB 1: ผู้ใช้คนเดียว (เรียนรู้พื้นฐาน)" enabled="true">
+        <stringProp name="ThreadGroup.comments">
+LAB 1: Thread Group คืออะไร?
+= กลุ่มของ Virtual Users (VU)
+num_threads = จำนวน Users
+ramp_time   = ใช้เวลากี่วินาทีในการเพิ่ม Users ให้ครบ
+loops       = แต่ละ User ทำซ้ำกี่ครั้ง
+        </stringProp>
+        <intProp name="ThreadGroup.num_threads">1</intProp>
+        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <intProp name="LoopController.loops">3</intProp>
+        </elementProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+      </ThreadGroup>
+      <hashTree>
+
+        <!-- Request 1: GET Posts -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy"
+          testname="GET /posts - ดูบทความทั้งหมด" enabled="true">
+          <stringProp name="HTTPSampler.path">/posts</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.comments">GET Request ง่ายที่สุด - ดูข้อมูล</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <!-- Assertion: ตรวจ Status Code -->
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion"
+            testname="✅ Assert: Status 200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp>200</stringProp>
+            </collectionProp>
+            <intProp name="Assertion.test_type">8</intProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <stringProp name="Assertion.custom_message">❌ ต้องได้ 200 OK!</stringProp>
+          </ResponseAssertion>
+          <hashTree/>
+
+          <!-- Duration Assertion: ตรวจเวลา -->
+          <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion"
+            testname="✅ Assert: เวลาต้องน้อยกว่า 3 วินาที" enabled="true">
+            <stringProp name="DurationAssertion.duration">3000</stringProp>
+          </DurationAssertion>
+          <hashTree/>
+
+          <!-- JSON Assertion: ตรวจ Response -->
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion"
+            testname="✅ Assert: Post แรกต้องมี ID=1" enabled="true">
+            <stringProp name="JSON_PATH">$[0].id</stringProp>
+            <stringProp name="EXPECTED_VALUE">1</stringProp>
+            <boolProp name="JSONVALIDATION">true</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+          </JSONPathAssertion>
+          <hashTree/>
+        </hashTree>
+
+        <!-- Request 2: GET Single Post -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy"
+          testname="GET /posts/1 - ดูบทความชิ้นที่ 1" enabled="true">
+          <stringProp name="HTTPSampler.path">/posts/1</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion"
+            testname="✅ Assert: Status 200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp>200</stringProp>
+            </collectionProp>
+            <intProp name="Assertion.test_type">8</intProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+          </ResponseAssertion>
+          <hashTree/>
+        </hashTree>
+
+        <!-- Request 3: GET Not Found (Negative) -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy"
+          testname="GET /posts/99999 - ❌ Negative Test" enabled="true">
+          <stringProp name="HTTPSampler.path">/posts/99999</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion"
+            testname="✅ Assert: Status 404 (ไม่พบข้อมูล)" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp>404</stringProp>
+            </collectionProp>
+            <intProp name="Assertion.test_type">8</intProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+          </ResponseAssertion>
+          <hashTree/>
+        </hashTree>
+
+        <!-- Think Time: หยุดพักระหว่าง requests -->
+        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer"
+          testname="⏱️ Think Time (หยุด 1 วินาที - จำลองคนจริง)" enabled="true">
+          <stringProp name="ConstantTimer.delay">1000</stringProp>
+        </ConstantTimer>
+        <hashTree/>
+
+      </hashTree>
+
+      <!-- ===================================================== -->
+      <!-- LAB 2: หลายผู้ใช้พร้อมกัน                           -->
+      <!-- ===================================================== -->
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup"
+        testname="📗 LAB 2: หลายผู้ใช้พร้อมกัน (5 Users)" enabled="false">
+        <stringProp name="ThreadGroup.comments">
+LAB 2: เพิ่มเป็น 5 Users พร้อมกัน
+เปิดใช้งานโดยเปลี่ยน enabled="false" เป็น "true"
+หรือคลิก Enable ใน JMeter GUI
+
+ramp_time=10 หมายความว่า:
+- เพิ่ม User ทีละ 1 ทุก 2 วินาที จนครบ 5 คน
+        </stringProp>
+        <intProp name="ThreadGroup.num_threads">5</intProp>
+        <intProp name="ThreadGroup.ramp_time">10</intProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <intProp name="LoopController.loops">2</intProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy"
+          testname="GET /posts" enabled="true">
+          <stringProp name="HTTPSampler.path">/posts</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion"
+            testname="✅ Status 200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp>200</stringProp>
+            </collectionProp>
+            <intProp name="Assertion.test_type">8</intProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion"
+            testname="✅ เวลาน้อยกว่า 5 วินาที (ยืดหยุ่นขึ้นเพราะหลาย users)" enabled="true">
+            <stringProp name="DurationAssertion.duration">5000</stringProp>
+          </DurationAssertion>
+          <hashTree/>
+        </hashTree>
+        <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer"
+          testname="⏱️ Random Think Time (สุ่ม 0.5-1.5 วินาที)" enabled="true">
+          <stringProp name="ConstantTimer.delay">500</stringProp>
+          <stringProp name="RandomTimer.range">1000</stringProp>
+        </GaussianRandomTimer>
+        <hashTree/>
+      </hashTree>
+
+      <!-- ===================================================== -->
+      <!-- LISTENERS: ดูผลลัพธ์                                  -->
+      <!-- ===================================================== -->
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector"
+        testname="👁️ View Results Tree (ดูรายละเอียดทุก Request)" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <n>saveConfig</n>
+          <value class="SampleSaveConfiguration">
+            <time>true</time><latency>true</latency><timestamp>true</timestamp>
+            <success>true</success><label>true</label><code>true</code>
+            <message>true</message><responseData>false</responseData>
+            <assertions>true</assertions>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+
+      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector"
+        testname="📊 Summary Report (ภาพรวมผลการทดสอบ)" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <n>saveConfig</n>
+          <value class="SampleSaveConfiguration">
+            <time>true</time><latency>true</latency><timestamp>true</timestamp>
+            <success>true</success><label>true</label>
+          </value>
+        </objProp>
+        <stringProp name="filename">results/jmeter_summary.jtl</stringProp>
+      </ResultCollector>
+      <hashTree/>
+
+      <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector"
+        testname="📈 Aggregate Report (ค่าเฉลี่ย, min, max)" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <n>saveConfig</n>
+          <value class="SampleSaveConfiguration">
+            <time>true</time><timestamp>true</timestamp><success>true</success>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

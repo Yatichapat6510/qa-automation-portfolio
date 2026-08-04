@@ -1,0 +1,17 @@
+{
+  "name": "qa-workshop-playwright-js",
+  "version": "1.0.0",
+  "description": "QA Workshop - Playwright JavaScript (Beginner)",
+  "scripts": {
+    "test":         "npx playwright test",
+    "test:headed":  "npx playwright test --headed",
+    "test:debug":   "npx playwright test --debug",
+    "test:login":   "npx playwright test --grep 'บทที่ 1'",
+    "test:products":"npx playwright test --grep 'บทที่ 2'",
+    "test:checkout":"npx playwright test --grep 'บทที่ 3'",
+    "report":       "npx playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0"
+  }
+}

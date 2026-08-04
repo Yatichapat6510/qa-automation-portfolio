@@ -1,0 +1,7 @@
+results/*.xml
+results/*.html
+!results/.gitkeep
+*.log
+geckodriver*.log
+__pycache__/
+*.pyc

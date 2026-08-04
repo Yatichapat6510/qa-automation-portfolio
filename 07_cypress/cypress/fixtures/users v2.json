@@ -1,0 +1,10 @@
+{
+  "validUsers": [
+    { "username": "standard_user",  "password": "secret_sauce", "role": "standard" },
+    { "username": "problem_user",   "password": "secret_sauce", "role": "problem" }
+  ],
+  "invalidUsers": [
+    { "username": "wrong_user",     "password": "wrong_pass",  "error": "do not match" },
+    { "username": "",               "password": "secret_sauce", "error": "Username is required" }
+  ]
+}
