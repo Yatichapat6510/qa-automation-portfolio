@@ -1,11 +1,14 @@
 // @ts-check
 import { defineConfig, devices } from '@playwright/test';
 
+const SAUCE_DEMO_BASE_URL = 'https://www.saucedemo.com/';
+
 /** @see https://playwright.dev/docs/test-configuration */
 export default defineConfig({
   testDir: './tests',
-  // The runnable suite is explicitly isolated from the non-runnable practice library.
-  testMatch: 'e2e/**/*.spec.js',
+  testMatch: '**/*.spec.[jt]s',
+  // Practice files are intentionally unregistered learning examples. Several are
+  // selector notes rather than executable Playwright tests.
   testIgnore: ['practice/**'],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
@@ -13,19 +16,35 @@ export default defineConfig({
   workers: 1,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
-    // Change this to the real application URL when these tests are used
-    // against a deployed application. The demo suite intercepts this host.
-    baseURL: process.env.BASE_URL ?? 'http://demo.local',
-    trace: 'on-first-retry',
+    baseURL: SAUCE_DEMO_BASE_URL,
+    // Headless is the default for the CLI and VS Code Test Explorer. Playwright's
+    // --headed flag still overrides this value, and --ui still opens UI mode.
     headless: true,
+    trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    video: 'off',
   },
   projects: [
     {
       name: 'demo-e2e-chromium',
-      // Uses installed Google Chrome without a machine-specific executable path.
+      testMatch: [
+        'interaction-workflows/**/*.spec.js',
+        'e2e/E2E api-integration.spec.js',
+        'e2e/E2E api-reqres.spec.js',
+        'e2e/E2E form-validation.spec.js',
+        'e2e/E2E Mini-Project 1.spec.js',
+        'e2e/E2E Shopping.spec.js',
+      ],
       use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+    },
+    {
+      name: 'sauce-demo-chromium',
+      testMatch: 'e2e/sauce-demo/tests/**/*.spec.js',
+      use: {
+        ...devices['Desktop Chrome'],
+        channel: 'chrome',
+        baseURL: SAUCE_DEMO_BASE_URL,
+      },
     },
   ],
 });

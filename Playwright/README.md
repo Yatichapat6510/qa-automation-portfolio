@@ -23,6 +23,18 @@ learning files. They are intentionally excluded from `npm test` because they
 target several unrelated sites and incomplete routes. Move a completed exercise
 into `tests/e2e` only after its target URL and assertions are verified.
 
+## Sauce Demo critical paths
+
+Production-style Sauce Demo tests are in `tests/e2e/sauce-demo`, owned by the
+`sauce-demo-chromium` and `sauce-demo-firefox` projects. Set `TEST_USERNAME`,
+`TEST_PASSWORD`, and `TEST_INVALID_PASSWORD`, then run:
+
+```powershell
+npm.cmd run test:sauce-demo
+```
+
+See `tests/e2e/sauce-demo/README.md` for environment and CI setup.
+
 ## Using a real application
 
 The interaction workflow presently runs against a local routed demo so it is

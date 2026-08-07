@@ -1,6 +1,8 @@
 import { expect, test } from './fixtures/demo-app.fixture.js';
 import { avatarImage, documentPdf, supportingDocuments } from './data/upload-files.data.js';
 
+const DEMO_APP_ORIGIN = 'http://demo.local';
+
 test.describe('Interaction workflows', () => {
   test('creates an account with registration details', async ({ page }) => {
     await page.goto('/register');
@@ -27,14 +29,14 @@ test.describe('Interaction workflows', () => {
   });
 
   test('opens an account menu and displays a help tooltip', async ({ page }) => {
-    await page.goto('/');
+    await page.goto(`${DEMO_APP_ORIGIN}/`);
 
     await page.getByRole('button', { name: 'Account' }).hover();
     await expect(page.getByRole('menu')).toBeVisible();
     await page.getByRole('menuitem', { name: 'My Profile' }).click();
-    await expect(page).toHaveURL('/profile');
+    await expect(page).toHaveURL(`${DEMO_APP_ORIGIN}/profile`);
 
-    await page.goto('/');
+    await page.goto(`${DEMO_APP_ORIGIN}/`);
     await page.getByRole('img', { name: 'Help' }).hover();
     await expect(page.getByRole('tooltip')).toHaveText('Click for help');
   });

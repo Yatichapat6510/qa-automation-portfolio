@@ -5,13 +5,13 @@ import { expect } from '@playwright/test';
 export class LoginPage {
     constructor(page) {
         this.page = page;
-        this.usernameInput = page.locator('#user-name');
-        this.passwordInput = page.locator('#password');
-        this.loginButton = page.locator('#login-button');
+        this.usernameInput = page.locator('[data-test="username"]');
+        this.passwordInput = page.locator('[data-test="password"]');
+        this.loginButton = page.locator('[data-test="login-button"]');
         this.errorMessage = page.locator('[data-test="error"]');
     }
     async goto() {
-        await this.page.goto('https://www.saucedemo.com/');
+        await this.page.goto('/');
     }
     async login(username, password) {
         await this.usernameInput.fill(username);
@@ -25,6 +25,6 @@ export class LoginPage {
         await expect(this.errorMessage).toContainText(message);
     }
     async expectLoginSuccess() {
-        await expect(this.page).toHaveURL('inventory');
+        await expect(this.page).toHaveURL(/\/inventory\.html$/);
     }
 }

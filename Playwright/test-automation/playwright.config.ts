@@ -6,7 +6,8 @@ export default defineConfig({
   retries: 1,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: 'https://www.saucedemo.com',
+    baseURL: 'https://www.saucedemo.com/',
+    headless: true,
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
