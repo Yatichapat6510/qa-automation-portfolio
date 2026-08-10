@@ -1,83 +1,61 @@
 # Playwright Structure
 
-## Current Registered Suite (2026-08-06)
+## Executable suite
 
-The root configuration discovers 53 tests in seven specifications:
-
-| Project | Browser | Tests | Owner / classification |
-|---|---|---:|---|
-| `demo-e2e-chromium` | system Google Chrome | 41 | `tests/interaction-workflows/**` and the five explicitly listed legacy `tests/e2e/*.spec.js` files; PROJECT-SPECIFIC |
-| `sauce-demo-chromium` | system Google Chrome | 12 | `tests/e2e/sauce-demo/**`; PROJECT-SPECIFIC |
-
-`tests/practice/**` remains an intentionally unregistered learning library. It includes selector notes, incomplete snippets, and public-site exercises, so it is excluded by root `testIgnore` rather than skipped dynamically at test runtime.
-
-## Configuration
-
-The authoritative root config is `playwright.config.js`.
-
-- Default `baseURL`: `https://www.saucedemo.com/`.
-- Default browser mode: `headless: true`, including VS Code Test Explorer runs.
-- `npx.cmd playwright test` runs headless.
-- `npx.cmd playwright test --headed` overrides the config and opens the browser.
-- `npx.cmd playwright test --ui` opens Playwright UI mode.
-- Tests use one worker locally, no local retries, two CI retries, list and HTML reporters, first-retry traces, and failure screenshots.
-- `test-automation/playwright.config.ts` is a separate empty scaffold. It uses the same SauceDemo base URL and headless default but currently has no `tests/` directory.
-
-## Project Layout
+`playwright.config.js` is the only active configuration. It discovers tests
+only below `tests/e2e/**/specs`, so the default CLI run and VS Code Testing
+Explorer cannot execute learning material under `tests/practice`.
 
 ```text
+configs/
+|-- environment.js                 # active environment/base URL
+`-- projects.js                    # named executable Playwright projects
+utils/                             # shared helpers (two-project consumer minimum)
 tests/
-|-- e2e/
-|   |-- E2E api-integration.spec.js
-|   |-- E2E api-reqres.spec.js
-|   |-- E2E form-validation.spec.js
-|   |-- E2E Mini-Project 1.spec.js
-|   |-- E2E Shopping.spec.js
+|-- e2e/                           # executable, deterministic suite
+|   |-- demo-app/
+|   |   |-- app-content/           # TEST-SPECIFIC in-memory application
+|   |   |-- data/                  # PROJECT-SPECIFIC test data
+|   |   |-- fixtures/              # PROJECT-SPECIFIC custom fixtures
+|   |   `-- specs/                 # executable demo-app specifications
 |   `-- sauce-demo/
-|       |-- app-content/sauce-demo.pages.js
-|       |-- data/credentials.data.js
-|       |-- fixtures/app.fixture.js
-|       |-- pages/
-|       |   |-- cart.page.js
-|       |   |-- checkout.page.js
-|       |   |-- inventory.page.js
-|       |   `-- login.page.js
-|       `-- tests/critical-paths.spec.js
-|-- interaction-workflows/
-|   |-- app-content/demo-pages.js
-|   |-- data/upload-files.data.js
-|   |-- fixtures/demo-app.fixture.js
-|   `-- interaction-workflows.spec.js
-`-- practice/                    # TEST-SPECIFIC / UNREGISTERED
+|       |-- app-content/
+|       |-- data/
+|       |-- fixtures/
+|       |-- pages/                 # PROJECT-SPECIFIC page objects
+|       `-- specs/                 # executable SauceDemo specifications
+`-- practice/                      # excluded from active discovery
+    |-- fundamentals/               # guided learning exercises
+    |-- draft-specs/                # incomplete/legacy examples and HTML fixtures
+    `-- experimental/               # sandbox experiments and archived scaffold
 ```
 
-## Responsibilities and Ownership
+## Projects and ownership
 
-- `tests/e2e/sauce-demo/**` belongs only to `sauce-demo-chromium`. Its fixture and page objects are PROJECT-SPECIFIC. Its credentials and in-memory application content are TEST-SPECIFIC.
-- `tests/interaction-workflows/**` and the five root E2E specs explicitly registered in the config belong to `demo-e2e-chromium`.
-- No module is classified as SHARED because no module has two project consumers.
-- A test using a custom fixture imports both `test` and `expect` from that fixture entry point.
-- Test data imports no tests or fixtures. Page objects import no specifications.
-- Root `resources/` and `tests/fixtures/index.js` remain unregistered legacy learning artifacts; they are not dependencies of either registered project.
+| Project | Test match | Owner/classification |
+|---|---|---|
+| `demo-e2e-chromium` | `demo-app/specs/**/*.spec.[jt]s` | PROJECT-SPECIFIC demo application suite |
+| `sauce-demo-chromium` | `sauce-demo/specs/**/*.spec.[jt]s` | PROJECT-SPECIFIC SauceDemo suite |
 
-## Deterministic Application Fixtures
+The demo-app and SauceDemo fixtures own their application routes. Data never
+imports specs or fixtures, and page objects do not import specs. There are no
+shared modules because the two projects have no shared consumer module.
 
-Both registered projects use deterministic in-memory HTML rather than depending on external network availability.
+## Browser behavior
 
-- `demo-app.fixture.js` fulfills `http://demo.local/**` for interaction examples and SauceDemo-compatible routes at `https://www.saucedemo.com/**` for the older shopping examples. The config base URL remains SauceDemo; the two demo tests that require the root demo page navigate explicitly to `http://demo.local`.
-- `sauce-demo/fixtures/app.fixture.js` fulfills `https://www.saucedemo.com/**` with a project-owned SauceDemo-compatible application. It covers all six accepted usernames, the common password, exact login errors, inventory, cart, and checkout.
+`use.headless` is `true`, which keeps CLI and VS Code Testing Explorer runs
+headless. `npx.cmd playwright test --headed` overrides that setting and
+`npx.cmd playwright test --ui` opens Playwright UI mode.
 
-This routing keeps the URL and locators aligned with SauceDemo while making the registered suite repeatable offline.
+## Legacy material
 
-## Adding or Changing Tests
+`tests/practice/draft-specs` contains former root resources, page-object
+examples, a package template, and incomplete specs. `experimental` contains
+sandbox tests and the archived nested Playwright scaffold. They are preserved
+for learning/reference only and must be promoted into a named E2E project only
+after they are made deterministic and independently verified.
 
-1. Assign the test to one named project, or document why it remains an unregistered practice example.
-2. Put project-only fixtures, pages, data, and application content under that project's responsibility-specific directory.
-3. Do not import another project's internals.
-4. After a structural change, run `npx.cmd playwright test --list`.
-5. Run every changed test and affected project before handoff.
-
-## Run Commands
+## Commands
 
 ```powershell
 npx.cmd playwright test --list

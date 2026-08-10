@@ -1,4 +1,4 @@
-// In-memory upload payloads used only by interaction-workflows.spec.js.
+// In-memory upload payloads used only by the demo-app interaction workflow spec.
 export const avatarImage = {
   name: 'avatar.jpg',
   mimeType: 'image/jpeg',

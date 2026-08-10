@@ -1,7 +1,7 @@
 // User Story: ในฐานะลูกค้า ฉันต้องการเลือกสินค้า เพิ่มใส่ตะกร้า และ checkout ได้สำเร็จ
 
 
-import { test, expect } from '../interaction-workflows/fixtures/demo-app.fixture.js';
+import { test, expect } from '../fixtures/demo-app.fixture.js';
 
 // Helper: login ก่อนทุก test
 // ฟังก์ชันนี้จะเปิดเว็บและล็อกอินด้วย standard_user

@@ -1,7 +1,7 @@
 // ทดสอบ Form Validation ทุก field — ทั้ง error cases และ success flow
 // เพิ่ม comment เพื่ออธิบายว่าแต่ละบรรทัดทำอะไร
 
-import { expect, test } from '../interaction-workflows/fixtures/demo-app.fixture.js';
+import { expect, test } from '../fixtures/demo-app.fixture.js';
 
 test.describe('Registration Form Validation', () => {
 

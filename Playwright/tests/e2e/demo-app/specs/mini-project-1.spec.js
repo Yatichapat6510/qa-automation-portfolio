@@ -1,4 +1,4 @@
-import { test as base, expect } from '../interaction-workflows/fixtures/demo-app.fixture.js';
+import { test as base, expect } from '../fixtures/demo-app.fixture.js';
 
 // นำเข้า Playwright test และ expect สำหรับ assertion
 class BasePage {

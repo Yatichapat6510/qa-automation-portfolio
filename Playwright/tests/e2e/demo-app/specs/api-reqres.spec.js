@@ -1,4 +1,4 @@
-import { test, expect } from '../interaction-workflows/fixtures/demo-app.fixture.js';
+import { test, expect } from '../fixtures/demo-app.fixture.js';
 
 const API_PATH = '/api/reqres';
 const users = Array.from({ length: 6 }, (_, index) => ({

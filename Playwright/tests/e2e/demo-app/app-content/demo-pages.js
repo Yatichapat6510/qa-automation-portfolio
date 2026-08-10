@@ -1,4 +1,4 @@
-// In-memory HTTP resources served by the interaction-workflows fixture.
+// In-memory HTTP resources served by the demo-app fixture.
 const layout = (content, script = '') => `
   <!doctype html>
   <html lang="en">

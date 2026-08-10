@@ -1,6 +1,6 @@
 // Test UI ที่ fetch data จาก API — mock response แล้วตรวจว่า UI render ถูกต้อง
 
-import { test, expect } from '../interaction-workflows/fixtures/demo-app.fixture.js';
+import { test, expect } from '../fixtures/demo-app.fixture.js';
 
 test.describe('API Integration Tests', () => {
 

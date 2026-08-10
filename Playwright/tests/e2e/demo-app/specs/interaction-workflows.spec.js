@@ -1,5 +1,5 @@
-import { expect, test } from './fixtures/demo-app.fixture.js';
-import { avatarImage, documentPdf, supportingDocuments } from './data/upload-files.data.js';
+import { expect, test } from '../fixtures/demo-app.fixture.js';
+import { avatarImage, documentPdf, supportingDocuments } from '../data/upload-files.data.js';
 
 const DEMO_APP_ORIGIN = 'http://demo.local';
 
