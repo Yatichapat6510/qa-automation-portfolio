@@ -1,9 +1,9 @@
 # Dependencies
 node_modules/
+.playwright-browsers/
 
 # Secrets and local settings
-.env
-.env.*
+.env*
 .claude/
 
 # Test artifacts and reports
@@ -16,7 +16,17 @@ log.html
 report.html
 output.xml
 out*.txt
+*.webm
+trace.zip
+allure-results/
+allure-report/
+htmlcov/
+coverage.xml
+junit*.xml
 
 # Python cache
 __pycache__/
 *.py[cod]
+.pytest_cache/
+.coverage
+.coverage.*
