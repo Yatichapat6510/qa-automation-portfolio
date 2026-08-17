@@ -1,0 +1,344 @@
+{
+  "info": {
+    "_postman_id": "39509cf8-ba60-4f02-af03-8ef4496ac36b",
+    "name": "🌱 restful-api",
+    "description": "Collection API Testing  \nไล่ทีละขั้น GET → POST → PUT → PATCH → DELETE  \nทุก request มี Test Script ตามความเข้าใจ",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54137584",
+    "_collection_link": "https://go.postman.co/collection/54137584-39509cf8-ba60-4f02-af03-8ef4496ac36b?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "1. GET — ดึงข้อมูลทั้งหมด",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ เช็คว่า API ตอบกลับสำเร็จ",
+              "pm.test(\"ได้รับข้อมูลสำเร็จ (Status 200)\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// ✅ เช็คว่าได้ข้อมูลเป็น Array กลับมา",
+              "pm.test(\"ข้อมูลที่ได้เป็น Array\", function () {",
+              "    pm.expect(pm.response.json()).to.be.an(\"array\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/objects",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects"
+          ]
+        },
+        "description": "ขั้นแรกสุด —ดึงข้อมูลดูไม่ต้องใส่อะไรเพิ่ม แค่กด Send"
+      },
+      "response": []
+    },
+    {
+      "name": "2. GET — ดึงข้อมูลชิ้นเดียวตาม ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ เช็ค Status 200",
+              "pm.test(\"ดึงข้อมูลสำเร็จ (Status 200)\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// ✅ เช็คว่า response มี field id, name, data",
+              "pm.test(\"ข้อมูลมีครบ: id, name, data\", function () {",
+              "    const res = pm.response.json();",
+              "    pm.expect(res).to.have.property(\"id\");",
+              "    pm.expect(res).to.have.property(\"name\");",
+              "    pm.expect(res).to.have.property(\"data\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/objects/{{objectId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects",
+            "{{objectId}}"
+          ]
+        },
+        "description": "ดึงข้อมูลชิ้นเดียวโดยระบุ ID ใช้ {{objectId}} ที่ตั้งไว้ใน Collection Variables"
+      },
+      "response": []
+    },
+    {
+      "name": "3. POST — สร้างข้อมูลใหม่",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ เช็ค Status 200",
+              "pm.test(\"สร้างข้อมูลสำเร็จ (Status 200)\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// ✅ เช็คว่า response มี id กลับมา (server สร้างให้)",
+              "pm.test(\"Server สร้าง id ให้อัตโนมัติ\", function () {",
+              "    const res = pm.response.json();",
+              "    pm.expect(res).to.have.property(\"id\");",
+              "});",
+              "",
+              "// 💾 Save id ไว้ใช้ต่อใน STEP ถัดไป",
+              "const res = pm.response.json();",
+              "if (res.id) {",
+              "    pm.collectionVariables.set(\"newObjectId\", res.id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"My First Object\",\n  \"data\": {\n    \"note\": \"สร้างโดยมือใหม่\",\n    \"price\": 999\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/objects",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects"
+          ]
+        },
+        "description": "สร้างข้อมูลใหม่ส่งเข้า API\nต้องใส่ Content-Type: application/json ที่ Headers\nและส่ง Body เป็น JSON"
+      },
+      "response": []
+    },
+    {
+      "name": "4. PUT — แก้ไขข้อมูลทั้งหมด",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ เช็ค Status 200",
+              "pm.test(\"แก้ไขข้อมูลสำเร็จ (Status 200)\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// ✅ เช็คว่าชื่อถูกอัปเดตแล้ว",
+              "pm.test(\"ชื่อถูกอัปเดตเรียบร้อย\", function () {",
+              "    const res = pm.response.json();",
+              "    pm.expect(res.name).to.equal(\"My First Object (Updated)\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"My First Object (Updated)\",\n  \"data\": {\n    \"note\": \"แก้ไขด้วย PUT แล้ว\",\n    \"price\": 1299\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/objects/{{newObjectId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects",
+            "{{newObjectId}}"
+          ]
+        },
+        "description": "PUT = แทนที่ข้อมูลทั้งหมด  \nทุก field ที่ไม่ส่งมาจะหายไป  \nใช้ {{newObjectId}} ที่ได้จาก STEP 3"
+      },
+      "response": []
+    },
+    {
+      "name": "5. PATCH — แก้ไขข้อมูลบางส่วน",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ เช็ค Status 200",
+              "pm.test(\"แก้ไขบางส่วนสำเร็จ (Status 200)\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// ✅ เช็คว่าชื่อเปลี่ยน แต่ data ยังอยู่ครบ",
+              "pm.test(\"ชื่อเปลี่ยน และ data ยังคงอยู่\", function () {",
+              "    const res = pm.response.json();",
+              "    pm.expect(res.name).to.equal(\"My First Object (Patched)\");",
+              "    pm.expect(res.data).to.not.be.null;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"My First Object (Patched)\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/objects/{{newObjectId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects",
+            "{{newObjectId}}"
+          ]
+        },
+        "description": "PATCH = แก้เฉพาะ field ที่ส่งมา\nต่างจาก PUT ตรงที่ข้อมูลเดิมยังอยู่ครบ"
+      },
+      "response": []
+    },
+    {
+      "name": "6. DELETE — ลบข้อมูล",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ เช็ค Status 200",
+              "pm.test(\"ลบข้อมูลสำเร็จ (Status 200)\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// ✅ เช็คว่า message บอกว่าลบแล้ว",
+              "pm.test(\"มีข้อความยืนยันการลบ\", function () {",
+              "    const res = pm.response.json();",
+              "    pm.expect(res).to.have.property(\"message\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/objects/{{newObjectId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects",
+            "{{newObjectId}}"
+          ]
+        },
+        "description": "ลบ object ที่สร้างไว้ใน STEP 3  \nหลัง delete แล้วลอง GET ดู จะได้ 404"
+      },
+      "response": []
+    },
+    {
+      "name": "7. GET — เช็คหลัง DELETE (ต้องได้ 404)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ เช็คว่าได้ 404 (ข้อมูลถูกลบแล้ว)",
+              "pm.test(\"ข้อมูลถูกลบแล้ว ได้ 404 ถูกต้อง\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/objects/{{newObjectId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects",
+            "{{newObjectId}}"
+          ]
+        },
+        "description": "ลองดึงข้อมูลที่เพิ่งลบไป\nต้องได้ 404 Not Found — ถ้าได้แสดงว่า DELETE ทำงานถูกต้อง"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.restful-api.dev",
+      "description": "Base URL ของ API"
+    },
+    {
+      "key": "objectId",
+      "value": "7",
+      "description": "ID สำหรับทดลอง GET / PUT / PATCH / DELETE"
+    },
+    {
+      "key": "newObjectId",
+      "value": "",
+      "description": "Auto-save จาก POST — ไม่ต้องแก้เอง"
+    }
+  ]
+}

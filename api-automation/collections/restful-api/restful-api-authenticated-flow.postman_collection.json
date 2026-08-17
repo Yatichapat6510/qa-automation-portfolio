@@ -1,0 +1,790 @@
+{
+  "info": {
+    "_postman_id": "e251cab5-d433-4282-bdf0-2d2a7f375278",
+    "name": "✨restful-api.dev",
+    "description": "Collection  \nครอบคลุม: Public CRUD → Authentication Flow → Authenticated CRUD → Error Handling  \nทุก request มี Test Scripts พร้อม และใช้ Collection Variables ตลอด",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54137584",
+    "_collection_link": "https://go.postman.co/collection/54137584-e251cab5-d433-4282-bdf0-2d2a7f375278?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "📌 STEP 1 — Public: GET All Objects",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ Test 1: Status Code",
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// ✅ Test 2: Response Time",
+              "pm.test('Response time is less than 3000ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+              "});",
+              "",
+              "// ✅ Test 3: Content-Type",
+              "pm.test('Content-Type is application/json', function () {",
+              "    pm.response.to.have.header('Content-Type');",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "",
+              "// ✅ Test 4: Response is Array",
+              "pm.test('Response body is an Array', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('array');",
+              "    pm.expect(jsonData.length).to.be.above(0);",
+              "});",
+              "",
+              "// ✅ Test 5: Schema Validation — แต่ละ object ต้องมี id และ name",
+              "pm.test('Each object has id and name fields', function () {",
+              "    const jsonData = pm.response.json();",
+              "    jsonData.forEach(function(item) {",
+              "        pm.expect(item).to.have.property('id');",
+              "        pm.expect(item).to.have.property('name');",
+              "        pm.expect(item.id).to.be.a('string');",
+              "        pm.expect(item.name).to.be.a('string');",
+              "    });",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/objects",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects"
+          ]
+        },
+        "description": "ดึง objects ทั้งหมดจาก public dataset ไม่ต้องใช้ API Key"
+      },
+      "response": []
+    },
+    {
+      "name": "📌 STEP 2 — Public: GET Single Object by ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ Test 1: Status Code 200",
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// ✅ Test 2: Response has correct structure",
+              "pm.test('Response has id, name, and data fields', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('id');",
+              "    pm.expect(jsonData).to.have.property('name');",
+              "    pm.expect(jsonData).to.have.property('data');",
+              "});",
+              "",
+              "// ✅ Test 3: ID in response matches requested ID",
+              "pm.test('Response ID matches requested ID', function () {",
+              "    const jsonData = pm.response.json();",
+              "    const requestedId = pm.collectionVariables.get('objectId');",
+              "    pm.expect(jsonData.id).to.equal(requestedId);",
+              "});",
+              "",
+              "// ✅ Test 4: data field is object or null",
+              "pm.test('data field is object or null', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.data === null || typeof jsonData.data === 'object').to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/objects/{{objectId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects",
+            "{{objectId}}"
+          ]
+        },
+        "description": "ดึง object ตาม ID — ใช้ Collection Variable {{objectId}}"
+      },
+      "response": []
+    },
+    {
+      "name": "📌 STEP 3 — Public: POST Create New Object",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ Test 1: Status Code 200",
+              "pm.test('Status code is 200 (Created)', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// ✅ Test 2: Response has id (assigned by server)",
+              "pm.test('Response contains server-assigned id', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('id');",
+              "    pm.expect(jsonData.id).to.be.a('string');",
+              "    pm.expect(jsonData.id).to.not.be.empty;",
+              "});",
+              "",
+              "// ✅ Test 3: Name matches what we sent",
+              "pm.test('Response name matches request payload', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.name).to.equal('MacBook Pro M3 — Interview Demo');",
+              "});",
+              "",
+              "// ✅ Test 4: createdAt field exists",
+              "pm.test('Response contains createdAt timestamp', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('createdAt');",
+              "});",
+              "",
+              "// ✅ Test 5: data fields are saved correctly",
+              "pm.test('Data payload is stored correctly', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.data).to.have.property('price');",
+              "    pm.expect(jsonData.data.price).to.equal(2499.99);",
+              "});",
+              "",
+              "// 💾 Auto-save ID → ใช้ใน STEP 4, 5, 6",
+              "const jsonData = pm.response.json();",
+              "if (jsonData.id) {",
+              "    pm.collectionVariables.set('createdObjectId', jsonData.id);",
+              "    console.log('✅ Saved createdObjectId:', jsonData.id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"MacBook Pro M3 — Interview Demo\",\n  \"data\": {\n    \"year\": 2024,\n    \"price\": 2499.99,\n    \"CPU model\": \"Apple M3 Pro\",\n    \"Hard disk size\": \"512 GB\",\n    \"color\": \"Space Black\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/objects",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects"
+          ]
+        },
+        "description": "สร้าง object ใหม่ — Script จะ save createdObjectId ไว้อัตโนมัติ"
+      },
+      "response": []
+    },
+    {
+      "name": "📌 STEP 4 — Public: PUT Full Update",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ Test 1: Status Code 200",
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// ✅ Test 2: Updated name is reflected",
+              "pm.test('Name is updated correctly', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.name).to.equal('MacBook Pro M3 — UPDATED');",
+              "});",
+              "",
+              "// ✅ Test 3: Data is replaced correctly",
+              "pm.test('Data fields are fully replaced', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.data['Hard disk size']).to.equal('1 TB');",
+              "    pm.expect(jsonData.data.price).to.equal(2299.99);",
+              "});",
+              "",
+              "// ✅ Test 4: updatedAt timestamp exists",
+              "pm.test('Response contains updatedAt timestamp', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('updatedAt');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"MacBook Pro M3 — UPDATED\",\n  \"data\": {\n    \"year\": 2024,\n    \"price\": 2299.99,\n    \"CPU model\": \"Apple M3 Max\",\n    \"Hard disk size\": \"1 TB\",\n    \"color\": \"Silver\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/objects/{{createdObjectId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects",
+            "{{createdObjectId}}"
+          ]
+        },
+        "description": "PUT = แทนที่ข้อมูลทั้งหมด ใช้ {{createdObjectId}} ที่ save ไว้จาก POST"
+      },
+      "response": []
+    },
+    {
+      "name": "📌 STEP 5 — Public: PATCH Partial Update",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ Test 1: Status Code 200",
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// ✅ Test 2: Name is updated",
+              "pm.test('Name field is updated', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.name).to.equal('MacBook Pro M3 — PATCHED NAME ONLY');",
+              "});",
+              "",
+              "// ✅ Test 3: Other fields (data) are NOT lost — PATCH vs PUT",
+              "pm.test('data field is preserved (not wiped by PATCH)', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.data).to.not.be.null;",
+              "    pm.expect(jsonData.data).to.be.an('object');",
+              "});",
+              "",
+              "// ✅ Test 4: updatedAt exists",
+              "pm.test('updatedAt timestamp is present', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('updatedAt');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"MacBook Pro M3 — PATCHED NAME ONLY\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/objects/{{createdObjectId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects",
+            "{{createdObjectId}}"
+          ]
+        },
+        "description": "PATCH = เปลี่ยนเฉพาะ field ที่ส่งมา ส่วนที่เหลือยังคงเดิม"
+      },
+      "response": []
+    },
+    {
+      "name": "📌 STEP 6 — Public: DELETE Object",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ Test 1: Status Code 200",
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// ✅ Test 2: Response has deletion confirmation message",
+              "pm.test('Response confirms deletion with message', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('message');",
+              "    pm.expect(jsonData.message).to.include('has been deleted');",
+              "});",
+              "",
+              "// ✅ Test 3: Message contains the deleted ID",
+              "pm.test('Deletion message includes the deleted object ID', function () {",
+              "    const jsonData = pm.response.json();",
+              "    const deletedId = pm.collectionVariables.get('createdObjectId');",
+              "    pm.expect(jsonData.message).to.include(deletedId);",
+              "});",
+              "",
+              "// 🧹 Clear variable after deletion",
+              "pm.collectionVariables.set('createdObjectId', '');",
+              "console.log('🧹 Cleared createdObjectId after deletion');"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/objects/{{createdObjectId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects",
+            "{{createdObjectId}}"
+          ]
+        },
+        "description": "ลบ object ตาม {{createdObjectId}} — ปิด CRUD loop"
+      },
+      "response": []
+    },
+    {
+      "name": "📌 STEP 7 — Error Handling: GET Non-existent Object (404)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ Test 1: Status Code ต้องเป็น 404",
+              "pm.test('Status code is 404 for non-existent object', function () {",
+              "    pm.response.to.have.status(404);",
+              "});",
+              "",
+              "// ✅ Test 2: Error response has message/error field",
+              "pm.test('Error response contains error or message field', function () {",
+              "    const jsonData = pm.response.json();",
+              "    const hasError = jsonData.hasOwnProperty('error') || jsonData.hasOwnProperty('message');",
+              "    pm.expect(hasError).to.be.true;",
+              "});",
+              "",
+              "// ✅ Test 3: Response is NOT 200",
+              "pm.test('Response is not a success status', function () {",
+              "    pm.expect(pm.response.code).to.not.equal(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/objects/id-that-does-not-exist-999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects",
+            "id-that-does-not-exist-999"
+          ]
+        },
+        "description": "ดึง object ด้วย ID ที่ไม่มีอยู่ — expect 404 Not Found"
+      },
+      "response": []
+    },
+    {
+      "name": "📌 STEP 8 — Error Simulation: Override Status to 401",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ Test 1: Status ถูก override เป็น 401",
+              "pm.test('Status code is overridden to 401', function () {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "// ✅ Test 2: Response body สอดคล้องกับ status ที่ override",
+              "pm.test('Response body matches 401 error format', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('object');",
+              "    // API returns error-format body when status is overridden",
+              "    console.log('Overridden response body:', JSON.stringify(jsonData));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/objects?status=401",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects"
+          ],
+          "query": [
+            {
+              "key": "status",
+              "value": "401",
+              "description": "Override response code เป็น 401 เพื่อจำลอง Unauthorized"
+            }
+          ]
+        },
+        "description": "ใช้ ?status= query param เพื่อ override HTTP response code — feature พิเศษของ restful-api.dev"
+      },
+      "response": []
+    },
+    {
+      "name": "STEP 9 — Authentication: Register New User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ Test 1: Status Code 200",
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// ✅ Test 2: Response has token",
+              "pm.test('Response contains JWT token', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('token');",
+              "    pm.expect(jsonData.token).to.be.a('string');",
+              "    pm.expect(jsonData.token).to.not.be.empty;",
+              "});",
+              "",
+              "// ✅ Test 3: tokenType is Bearer",
+              "pm.test('Token type is Bearer', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.tokenType).to.equal('Bearer');",
+              "});",
+              "",
+              "// ✅ Test 4: User object is returned",
+              "pm.test('Response contains user object with id and email', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.user).to.have.property('id');",
+              "    pm.expect(jsonData.user).to.have.property('email');",
+              "});",
+              "",
+              "// 💾 Auto-save JWT Token",
+              "const jsonData = pm.response.json();",
+              "if (jsonData.token) {",
+              "    pm.collectionVariables.set('jwtToken', jsonData.token);",
+              "    console.log('✅ JWT Token saved successfully');",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{apiKey}}",
+            "description": "ต้องมี API Key จาก restful-api.dev"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"demo.interview@test.com\",\n  \"password\": \"Password123!\",\n  \"name\": \"Interview Demo\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/register",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "register"
+          ]
+        },
+        "description": "Register และรับ JWT — Script จะ save token ไว้ใน {{jwtToken}} อัตโนมัติ"
+      },
+      "response": []
+    },
+    {
+      "name": "STEP 10 — Authenticated: POST Add Object to Collection",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ Test 1: Status Code 200",
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// ✅ Test 2: Object created with ID",
+              "pm.test('Created object has server-assigned id', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('id');",
+              "    pm.expect(jsonData.id).to.not.be.empty;",
+              "});",
+              "",
+              "// ✅ Test 3: Data is stored correctly",
+              "pm.test('Object data is stored as sent', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.name).to.equal('Dell XPS 15 — Interview Demo');",
+              "    pm.expect(jsonData.data.price).to.equal(1899.99);",
+              "});",
+              "",
+              "// 💾 Save ID for CRUD chain",
+              "const jsonData = pm.response.json();",
+              "if (jsonData.id) {",
+              "    pm.collectionVariables.set('authObjectId', jsonData.id);",
+              "    console.log('✅ Saved authObjectId:', jsonData.id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{apiKey}}",
+            "description": "Required: API Key ของคุณ"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Dell XPS 15 — Interview Demo\",\n  \"data\": {\n    \"year\": 2024,\n    \"price\": 1899.99,\n    \"CPU model\": \"Intel Core Ultra 9\",\n    \"RAM\": \"32 GB\",\n    \"Storage\": \"1 TB SSD\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/collections/{{collectionName}}/objects",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "collections",
+            "{{collectionName}}",
+            "objects"
+          ]
+        },
+        "description": "สร้าง object ใน authenticated collection — ถ้า collection ไม่มีจะถูกสร้างอัตโนมัติ"
+      },
+      "response": []
+    },
+    {
+      "name": "STEP 11 — Authenticated: GET List Objects in Collection",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ Test 1: Status Code 200",
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// ✅ Test 2: Response is Array",
+              "pm.test('Response is an array', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('array');",
+              "});",
+              "",
+              "// ✅ Test 3: Pagination — results respect limit",
+              "pm.test('Results count respects limit parameter', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.length).to.be.at.most(10);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/collections/{{collectionName}}/objects?limit=10&offset=0",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "collections",
+            "{{collectionName}}",
+            "objects"
+          ],
+          "query": [
+            {
+              "key": "limit",
+              "value": "10",
+              "description": "จำนวนสูงสุดที่ return"
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "description": "เริ่มจากรายการที่เท่าไร (pagination)"
+            }
+          ]
+        },
+        "description": "ดึง objects ทั้งหมดใน collection — รองรับ limit/offset pagination"
+      },
+      "response": []
+    },
+    {
+      "name": "STEP 12 — Authenticated: DELETE Object from Collection",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ✅ Test 1: Status Code 200",
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// ✅ Test 2: Deletion confirmed",
+              "pm.test('Response confirms deletion', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('message');",
+              "    pm.expect(jsonData.message).to.include('has been deleted');",
+              "});",
+              "",
+              "// 🧹 Cleanup",
+              "pm.collectionVariables.set('authObjectId', '');",
+              "pm.collectionVariables.set('jwtToken', '');",
+              "console.log('🧹 Session cleaned up — demo complete!');"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/collections/{{collectionName}}/objects/{{authObjectId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "collections",
+            "{{collectionName}}",
+            "objects",
+            "{{authObjectId}}"
+          ]
+        },
+        "description": "ลบ object ออกจาก collection — ใช้ {{authObjectId}} ที่ save ไว้"
+      },
+      "response": []
+    },
+    {
+      "name": "New Request",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.restful-api.dev",
+      "description": "Base URL ของ API"
+    },
+    {
+      "key": "objectId",
+      "value": "7",
+      "description": "ID ที่ใช้ทดสอบ GET / PUT / PATCH / DELETE (Public)"
+    },
+    {
+      "key": "createdObjectId",
+      "value": "",
+      "description": "Auto-set จาก POST — ใช้ใน PUT/PATCH/DELETE"
+    },
+    {
+      "key": "jwtToken",
+      "value": "",
+      "description": "Auto-set จาก /register หรือ /login"
+    },
+    {
+      "key": "collectionName",
+      "value": "laptops",
+      "description": "ชื่อ collection ที่ใช้ทดสอบ Authenticated endpoints"
+    },
+    {
+      "key": "authObjectId",
+      "value": "",
+      "description": "Auto-set จาก POST /collections — ใช้ใน Authenticated CRUD"
+    }
+  ]
+}

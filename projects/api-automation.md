@@ -1,12 +1,13 @@
 # API Testing and Automation
 
-**Current material:** [`Workshops/QA-Automation-Workshop/week02-api-testing`](../Workshops/QA-Automation-Workshop/week02-api-testing/) and [`Workshops/Workshop/beginner_postman_collection.json`](../Workshops/Workshop/beginner_postman_collection.json)
+**Implementation:** [`api-automation/`](../api-automation/)
 
 ## Current evidence
 
-- Postman collections for request and assertion practice.
-- Python API tests against the workshop demo application.
-- A local Flask demo API in `Workshops/QA-Automation-Workshop/demo-app/`.
+- [REST CRUD basics](../api-automation/collections/restful-api/restful-api-basic-crud.postman_collection.json)
+- [REST authenticated flow](../api-automation/collections/restful-api/restful-api-authenticated-flow.postman_collection.json)
+- [Posts, Users, and Comments practice](../api-automation/collections/practice/practice-api-testing-demo.postman_collection.json)
+- The collections are organised separately from workshop source material so they can become a standalone featured API project.
 
 ## Target showcase layout
 
