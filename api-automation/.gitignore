@@ -1,0 +1,5 @@
+node_modules/
+.npm-cache/
+reports/*.html
+reports/*.json
+.env

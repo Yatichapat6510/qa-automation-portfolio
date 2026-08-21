@@ -1,0 +1,667 @@
+{
+  "info": {
+    "_postman_id": "e3449c6b-f334-401d-b5fc-003293da08e8",
+    "name": "💻COL — JSONPlaceholder — Learning Framework",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54137584",
+    "_collection_link": "https://go.postman.co/collection/54137584-e3449c6b-f334-401d-b5fc-003293da08e8?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "B1 — ตรวจรายการ Posts (Happy Path)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "const posts = pm.response.json();\r",
+              "\r",
+              "pm.test('Response is a non-empty array', () => {\r",
+              "    pm.expect(posts).to.be.an('array').that.is.not.empty;\r",
+              "});\r",
+              "\r",
+              "pm.test('First post has the required fields', () => {\r",
+              "    pm.expect(posts[0]).to.include.keys('id', 'title', 'body', 'userId');\r",
+              "    pm.expect(posts[0].id).to.be.a('number');\r",
+              "    pm.expect(posts[0].userId).to.be.a('number');\r",
+              "    pm.expect(posts[0].title).to.be.a('string').and.not.empty;\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "inherit"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{base_url}}/posts",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "posts"
+          ]
+        },
+        "description": "StartFragment\n\n### B1 — ตรวจรายการ Posts (Happy Path)\n\n**ใช้ request:** `01 — GET All Posts`\n\n- ส่ง `GET {{base_url}}/posts`.\n    \n- ยืนยัน status 200, response เป็น array ที่ไม่ว่าง และ post ตัวแรกมี `id`, `title`, `body`, `userId`.\n    \n- ห้าม assert จำนวนเท่ากับ 100 แบบตายตัว เพราะข้อมูล fixture อาจเปลี่ยนได้.\n    \n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "B2 — ตรวจ Post เดี่ยว (Happy Path + Boundary)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', () => pm.response.to.have.status(200));\r",
+              "\r",
+              "const post = pm.response.json();\r",
+              "const requestedId = Number(pm.collectionVariables.get('existing_post_id'));\r",
+              "\r",
+              "pm.test('Returned post matches the requested ID', () => {\r",
+              "  pm.expect(post.id).to.eql(requestedId);\r",
+              "  pm.expect(post).to.include.keys('title', 'body', 'userId');\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/posts/{{existing_post_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "posts",
+            "{{existing_post_id}}"
+          ]
+        },
+        "description": "StartFragment\n\n### B2 — ตรวจ Post เดี่ยว (Happy Path + Boundary)\n\n**ใช้ request:** `02 — GET Single Post by ID` เปลี่ยน URL เป็น `{{base_url}}/posts/{{existing_post_id}}`.\n\n- ทดสอบขอบเขต valid ด้วย `existing_post_id = 1` และ `100`.\n    \n- ตรวจว่า `id` ใน response ตรงกับตัวแปรที่ส่งไป.\n    \n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "B3 — สร้าง Post ที่ถูกต้อง (Happy Path)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201 Created', () => {\r",
+              "    pm.response.to.have.status(201);\r",
+              "});\r",
+              "\r",
+              "pm.test('Created post echoes the submitted fields and returns an ID', () => {\r",
+              "    // ป้องกัน Error กรณี Response ไม่ใช่ JSON\r",
+              "    const response = pm.response.json();\r",
+              "    \r",
+              "    let sent = {};\r",
+              "    if (pm.request.body && pm.request.body.raw) {\r",
+              "        sent = JSON.parse(pm.variables.replaceIn(pm.request.body.raw));\r",
+              "    }\r",
+              "\r",
+              "    pm.expect(response.id).to.be.a('number');\r",
+              "    pm.expect(response.title).to.eql(sent.title);\r",
+              "    pm.expect(response.body).to.eql(sent.body);\r",
+              "    pm.expect(response.userId).to.eql(sent.userId);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "inherit"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"title\": \"QA Engineer\",\r\n  \"body\": \"นักทดสอบระบบ\",\r\n  \"userId\": 1\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/posts",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "posts"
+          ]
+        },
+        "description": "StartFragment\n\n### B3 — สร้าง Post ที่ถูกต้อง (Happy Path)\n\n**ใช้ request:** `03 — POST Create New Post`\n\n#### GUI\n\n1. ตรวจ Method เป็น **POST** และ URL เป็น `{{base_url}}/posts`.\n    \n2. เปิด **Headers** > เพิ่ม `Content-Type` = `application/json` (Collection มีมาให้แล้ว).\n    \n3. เปิด **Body** > เลือก **raw** > จาก dropdown ด้านขวาเลือก **JSON**.\n    \n4. วาง body ตัวอย่าง: `{\"title\":\"QA Learning Post\",\"body\":\"ทดสอบการสร้าง Post ด้วย Postman\",\"userId\":1}`\n    \n5. เขียนสคริป **Post-response** แล้วกด Send.\n    \n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "B4 — Not Found (Negative Case)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Unknown post returns 404', () => {\r",
+              "  pm.response.to.have.status(404);\r",
+              "});\r",
+              "\r",
+              "pm.test('Response is not a successful resource payload', () => {\r",
+              "  pm.expect(pm.response.code).to.not.be.within(200, 299);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/posts/99999",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "posts",
+            "99999"
+          ]
+        },
+        "description": "StartFragment\n\n### B4 — Not Found (Negative Case)\n\n**ใช้ request:** `04 — GET 404 Not Found (Negative)`\n\nส่ง `GET {{base_url}}/posts/99999` และพิสูจน์ว่าสถานะไม่ใช่ success โดยไม่ assert ข้อความ error ที่ API ไม่ได้ระบุเป็น contract.\n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "I1 — Validate Users และ response time",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', () => pm.response.to.have.status(200));\r",
+              "pm.test('Response time is below 2 seconds', () => {\r",
+              "  pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+              "});\r",
+              "\r",
+              "const users = pm.response.json();\r",
+              "pm.test('Users response has valid basic shape', () => {\r",
+              "  pm.expect(users).to.be.an('array').that.is.not.empty;\r",
+              "  users.forEach((user) => {\r",
+              "    pm.expect(user).to.include.keys('id', 'name', 'username', 'email', 'address', 'company');\r",
+              "    pm.expect(user.id).to.be.a('number');\r",
+              "    pm.expect(user.email).to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/);\r",
+              "  });\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/users",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users"
+          ]
+        },
+        "description": "StartFragment\n\n### I1 — Validate Users และ response time\n\n**ใช้ request:** `05 — Functional Test: GET Users + Validation`\n\n เปิด request > URL `{{base_url}}/users` > แท็บ **Scripts** > **Post-response** > วางสคริปต์.\n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "I2 — Filter และ invalid query parameter",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', () => pm.response.to.have.status(200));\r",
+              "\r",
+              "const posts = pm.response.json();\r",
+              "pm.test('Every returned post belongs to the requested user', () => {\r",
+              "    pm.expect(posts).to.be.an('array').that.is.not.empty;\r",
+              "    posts.forEach((post) => pm.expect(post.userId).to.eql(1));\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/posts?userId=1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "posts"
+          ],
+          "query": [
+            {
+              "key": "userId",
+              "value": "1"
+            }
+          ]
+        },
+        "description": "StartFragment\n\n### Filter และ invalid query parameter\n\n**ใช้ request:** สร้างสำเนา request `01` ชื่อ `I2 — GET Posts by userId`.\n\n1. ตั้ง URL เป็น `{{base_url}}/posts`.\n    \n2. เปิดแท็บ **Params** > เพิ่ม Key `userId`, Value `1`, และติ๊ก checkbox ให้ active. Postman จะสร้าง `?userId=1` ให้เอง.\n    \n3. ใน **Post-response** วางสคริปต์ด้านล่าง. ส่ง request.\n    \n4. เปลี่ยน Value เป็น `invalid_string` แล้วส่งซ้ำเพื่อทำ negative exploration.\n    \n5. StartFragment`userId=1`EndFragment\n    \n6. StartFragment`userId=invalid_string`EndFragment\n    \n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "I2 — userId=invalid_string",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('API responds successfully but returns no matching posts', () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "    pm.expect(pm.response.json()).to.be.an('array').that.is.empty;\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/posts?userId=invalid_string",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "posts"
+          ],
+          "query": [
+            {
+              "key": "userId",
+              "value": "invalid_string"
+            }
+          ]
+        },
+        "description": "StartFragment\n\n### Filter และ invalid query parameter\n\n**ใช้ request:** สร้างสำเนา request `01` ชื่อ `I2 — GET Posts by userId`.\n\n1. ตั้ง URL เป็น `{{base_url}}/posts`.\n    \n2. เปิดแท็บ **Params** > เพิ่ม Key `userId`, Value `1`, และติ๊ก checkbox ให้ active. Postman จะสร้าง `?userId=1` ให้เอง.\n    \n3. ใน **Post-response** วางสคริปต์ด้านล่าง. ส่ง request.\n    \n4. เปลี่ยน Value เป็น `invalid_string` แล้วส่งซ้ำเพื่อทำ negative exploration.\n    \n5. StartFragment`userId=1`EndFragment\n    \n6. StartFragment`userId=invalid_string`EndFragment\n    \n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "I3 —Regression: PUT Full Update",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Full update returns 200', () => pm.response.to.have.status(200));\r",
+              "\r",
+              "const sent = JSON.parse(pm.variables.replaceIn(pm.request.body.raw));\r",
+              "const response = pm.response.json();\r",
+              "\r",
+              "pm.test('PUT response echoes all replacement fields', () => {\r",
+              "    pm.expect(response).to.deep.include({\r",
+              "        id: sent.id,\r",
+              "        title: sent.title,\r",
+              "        body: sent.body,\r",
+              "        userId: sent.userId\r",
+              "    });\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"id\": 1,\r\n  \"title\": \"QA Engineer\",\r\n  \"body\": \"นักทดสอบระบบ\",\r\n  \"userId\": 1\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/posts/{{existing_post_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "posts",
+            "{{existing_post_id}}"
+          ]
+        },
+        "description": "StartFragment\n\n**ใช้ request:** `13 — Regression: PUT Full Update` และ `16 — PATCH Partial Update`\n\n**ก่อนส่ง:** เปลี่ยน path ID เป็น `{{existing_post_id}}` (ค่า 1) เพื่อให้ body และ URL อ่านจาก test data เดียวกัน.\n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "I6 — PATCH Partial Update",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Partial update returns 200', () => pm.response.to.have.status(200));\r",
+              "\r",
+              "const sent = JSON.parse(pm.variables.replaceIn(pm.request.body.raw));\r",
+              "const response = pm.response.json();\r",
+              "\r",
+              "pm.test('PATCH response contains the changed title', () => {\r",
+              "    pm.expect(response.id).to.eql(Number(pm.collectionVariables.get('existing_post_id') || 1));\r",
+              "    pm.expect(response.title).to.eql(sent.title);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"title\": \"Updated Title via PATCH\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/posts/{{existing_post_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "posts",
+            "{{existing_post_id}}"
+          ]
+        },
+        "description": "StartFragment\n\n**ใช้ request:** `13 — Regression: PUT Full Update` และ `16 — PATCH Partial Update`\n\n**ก่อนส่ง:** เปลี่ยน path ID เป็น `{{existing_post_id}}` (ค่า 1) เพื่อให้ body และ URL อ่านจาก test data เดียวกัน.\n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "A1 — สร้าง data แบบ dynamic ก่อนส่ง POST",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "const now = Date.now();\r",
+              "const suffix = `${now}-${Math.floor(Math.random() * 100000)}`;\r",
+              "\r",
+              "pm.collectionVariables.set('run_id', suffix);\r",
+              "pm.collectionVariables.set('test_email', `qa.${suffix}@example.test`);\r",
+              "pm.collectionVariables.set('dynamic_title', `QA dynamic post ${suffix}`);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Dynamic post is created', () => pm.response.to.have.status(201));\r",
+              "\r",
+              "const sent = JSON.parse(pm.variables.replaceIn(pm.request.body.raw));\r",
+              "const response = pm.response.json();\r",
+              "\r",
+              "pm.test('Response matches dynamic input', () => {\r",
+              "    pm.expect(response.id).to.be.a('number');\r",
+              "    pm.expect(response.title).to.eql(sent.title);\r",
+              "    pm.expect(response.body).to.eql(sent.body);\r",
+              "});\r",
+              "\r",
+              "pm.collectionVariables.set('created_post_id', String(response.id));\r",
+              "console.log(`Saved created_post_id = ${response.id}`);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"title\": \"{{dynamic_title}}\",\r\n  \"body\": \"Created by {{test_email}}\",\r\n  \"userId\": 1\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/posts",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "posts"
+          ]
+        },
+        "description": "StartFragment\n\n**ใช้ request:** `10 — Dynamic Email + Timestamp Pre-request`\n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "A2 — PATCH Created ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('PATCH accepts the chained ID', () => pm.response.to.have.status(200));\r",
+              "\r",
+              "const sent = JSON.parse(pm.variables.replaceIn(pm.request.body.raw));\r",
+              "const response = pm.response.json();\r",
+              "\r",
+              "pm.test('PATCH response uses the ID saved from POST', () => {\r",
+              "    const expectedId = Number(pm.collectionVariables.get('created_post_id'));\r",
+              "    \r",
+              "    // ตรวจสอบ title ที่ส่งไปแก้ไข\r",
+              "    pm.expect(response.title).to.eql(sent.title);\r",
+              "    \r",
+              "    // ตรวจสอบ id หาก API ตอบกลับ id มา ให้เช็กว่าตรงกับตัวแปร\r",
+              "    if (response.id !== undefined) {\r",
+              "        pm.expect(response.id).to.eql(expectedId);\r",
+              "    }\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"title\": \"Patched in run {{run_id}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/posts/{{created_post_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "posts",
+            "{{created_post_id}}"
+          ]
+        },
+        "description": "StartFragment\n\n### A2 — Chain ID ไป PATCH และ DELETE\n\nJSONPlaceholder ไม่ persist การสร้าง resource ดังนั้น request 11 (`GET /posts/{{created_post_id}}`) **ไม่ใช่จุดยืนยัน success ของ workflow นี้**. ใช้ ID ที่ได้เพื่อสาธิต variable chaining กับ endpoint เขียนข้อมูล และตรวจ response ที่ API จำลองกลับมาแทน.\n\n#### A2.1 PATCH\n\n1. สร้างสำเนา request 16 ชื่อ `A2 — PATCH Created ID`.\n    \n2. URL: `{{base_url}}/posts/{{created_post_id}}`.\n    \n3. Body > raw > JSON:\n    \n4. StartFragment\n    \n5. Post-response / Tests\n    \n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "A2 — DELETE Created ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('DELETE returns 200', () => pm.response.to.have.status(200));\r",
+              "\r",
+              "pm.test('DELETE response is an empty object', () => {\r",
+              "    pm.expect(pm.response.json()).to.deep.equal({});\r",
+              "});\r",
+              "\r",
+              "pm.collectionVariables.unset('created_post_id');"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/posts/{{created_post_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "posts",
+            "{{created_post_id}}"
+          ]
+        },
+        "description": "StartFragment\n\n#### A2.2 DELETE / cleanup\n\n1. สร้างสำเนา request 14 ชื่อ `A2 — DELETE Created ID`.\n    \n2. URL: `{{base_url}}/posts/{{created_post_id}}`.\n    \n3. Post-response / Tests:\n    \n\nEndFragment"
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": ""
+    },
+    {
+      "key": "test_email",
+      "value": "",
+      "description": "Pre-request Script จะสร้างให้"
+    },
+    {
+      "key": "run_id",
+      "value": "",
+      "description": "ทำให้ข้อมูลทดสอบแต่ละรอบไม่ซ้ำ"
+    },
+    {
+      "key": "dynamic_title",
+      "value": "",
+      "description": "ชื่อ Post ที่สร้างแบบ dynamic"
+    },
+    {
+      "key": "existing_post_id",
+      "value": "",
+      "description": "ID ที่มีจริง ใช้กับ PUT/PATCH/DELETE"
+    }
+  ]
+}

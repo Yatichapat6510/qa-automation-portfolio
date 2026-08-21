@@ -1,0 +1,2392 @@
+{
+  "info": {
+    "_postman_id": "27b33def-e898-4b8a-a857-40088da6c93b",
+    "name": "🔎COL — RESTful API — Auth — Original",
+    "description": "Real REST API from https://restful-api.dev — ครอบคลุมทั้ง Public และ Authenticated Endpoints\nรองรับ Full CRUD: GET, POST, PUT, PATCH, DELETE\nเหมาะสำหรับสาธิตในการสัมภาษณ์งาน QA / API Tester\n\n\nContact Support:\n Name: restful-api.dev",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54137584",
+    "_collection_link": "https://go.postman.co/collection/54137584-27b33def-e898-4b8a-a857-40088da6c93b?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Public - Objects",
+      "item": [
+        {
+          "name": "Get All Objects (Public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const contentType = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "const bodyText = pm.response.text();",
+                  "",
+                  "pm.test('Response body is present', function () {",
+                  "    pm.expect(bodyText).to.be.a('string');",
+                  "    pm.expect(bodyText.length).to.be.greaterThan(0);",
+                  "});",
+                  "",
+                  "let json;",
+                  "pm.test('Response is JSON', function () {",
+                  "    const looksLikeJson = bodyText.trim().startsWith('{') || bodyText.trim().startsWith('[');",
+                  "    pm.expect(looksLikeJson || contentType.includes('application/json')).to.be.true;",
+                  "    json = pm.response.json();",
+                  "    pm.expect(json).to.exist;",
+                  "});",
+                  "",
+                  "if (json && Array.isArray(json)) {",
+                  "    pm.test('Success response has HTTP 200', function () {",
+                  "        pm.response.to.have.status(200);",
+                  "    });",
+                  "",
+                  "    pm.test('Success response is an array', function () {",
+                  "        pm.expect(json).to.be.an('array');",
+                  "    });",
+                  "",
+                  "    pm.test('Success array items have basic object shape when present', function () {",
+                  "        json.forEach((item) => {",
+                  "            pm.expect(item).to.be.an('object');",
+                  "            if (Object.prototype.hasOwnProperty.call(item, 'id')) {",
+                  "                pm.expect(item.id).to.not.be.undefined;",
+                  "                pm.expect(['string', 'number']).to.include(typeof item.id);",
+                  "            }",
+                  "            if (Object.prototype.hasOwnProperty.call(item, 'name')) {",
+                  "                pm.expect(item.name).to.be.a('string');",
+                  "            }",
+                  "            if (Object.prototype.hasOwnProperty.call(item, 'data') && item.data !== null) {",
+                  "                pm.expect(item.data).to.be.an('object');",
+                  "            }",
+                  "        });",
+                  "    });",
+                  "} else if (json && typeof json === 'object' && Object.prototype.hasOwnProperty.call(json, 'error')) {",
+                  "    pm.test('Error response includes an error field', function () {",
+                  "        pm.expect(json.error).to.exist;",
+                  "        pm.expect(json.error).to.be.a('string');",
+                  "    });",
+                  "",
+                  "    pm.test('Daily request limit error mentions the limit', function () {",
+                  "        pm.expect(json.error.toLowerCase()).to.include('limit');",
+                  "        pm.expect(json.error.toLowerCase()).to.include('daily request');",
+                  "    });",
+                  "} else {",
+                  "    pm.test('Response matches an expected success or error shape', function () {",
+                  "        pm.expect.fail('Expected either a success array response or an object with an error field.');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/objects?id=string&id=string",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "objects"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "string",
+                  "description": "ระบุ ID หลายตัวเพื่อดึงเฉพาะ objects ที่ต้องการ เช่น ?id=3&id=5&id=10"
+                },
+                {
+                  "key": "id",
+                  "value": "string",
+                  "description": "ระบุ ID หลายตัวเพื่อดึงเฉพาะ objects ที่ต้องการ เช่น ?id=3&id=5&id=10"
+                }
+              ]
+            },
+            "description": "ดึงรายการ objects ทั้งหมดจาก public dataset ไม่ต้องใช้ API Key"
+          },
+          "response": [
+            {
+              "name": "รายการ objects สำเร็จ",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/objects?id=string",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "objects"
+                  ],
+                  "query": [
+                    {
+                      "description": "ระบุ ID หลายตัวเพื่อดึงเฉพาะ objects ที่ต้องการ เช่น ?id=3&id=5&id=10",
+                      "key": "id",
+                      "value": "string"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"id\": \"1\",\n    \"name\": \"Google Pixel 6 Pro\",\n    \"data\": {\n      \"color\": \"Cloudy White\",\n      \"capacity\": \"128 GB\"\n    }\n  },\n  {\n    \"id\": \"7\",\n    \"name\": \"Apple MacBook Pro 16\",\n    \"data\": {\n      \"year\": 2019,\n      \"price\": 1849.99,\n      \"CPU model\": \"Intel Core i9\",\n      \"Hard disk size\": \"1 TB\"\n    }\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Create Object (Public)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Apple MacBook Pro 16\",\n  \"data\": {\n    \"year\": 2019,\n    \"price\": 1849.99,\n    \"CPU model\": \"Intel Core i9\",\n    \"Hard disk size\": \"1 TB\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/objects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "objects"
+              ]
+            },
+            "description": "สร้าง object ใหม่ใน public dataset ข้อมูลที่สร้างจะถูกเก็บไว้ชั่วคราว"
+          },
+          "response": [
+            {
+              "name": "Object ถูกสร้างสำเร็จ",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Apple MacBook Pro 16\",\n  \"data\": {\n    \"year\": 2019,\n    \"price\": 1849.99,\n    \"CPU model\": \"Intel Core i9\",\n    \"Hard disk size\": \"1 TB\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/objects",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "objects"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": \"ff808181932badb60193a95a29190220\",\n  \"name\": \"Apple MacBook Pro 16\",\n  \"data\": {\n    \"year\": 2019,\n    \"price\": 1849.99,\n    \"CPU model\": \"Intel Core i9\",\n    \"Hard disk size\": \"1 TB\"\n  },\n  \"createdAt\": \"2022-11-21T20:06:23.986Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Single Object (Public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Response status is either success or current rate-limit response', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 429, 405]);",
+                  "});",
+                  "",
+                  "const contentType = pm.response.headers.get('Content-Type') || '';",
+                  "const isJsonLike = contentType.toLowerCase().includes('application/json') || /^[\\s]*[\\[{]/.test(pm.response.text());",
+                  "let responseJson = null;",
+                  "",
+                  "pm.test('Response body is parseable when JSON is returned', function () {",
+                  "    if (isJsonLike) {",
+                  "        responseJson = pm.response.json();",
+                  "        pm.expect(responseJson).to.exist;",
+                  "    } else {",
+                  "        pm.expect(pm.response.text()).to.be.a('string');",
+                  "    }",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    pm.test('Status code is 200', function () {",
+                  "        pm.response.to.have.status(200);",
+                  "    });",
+                  "",
+                  "    pm.test('Successful response is a JSON object', function () {",
+                  "        if (!responseJson) {",
+                  "            responseJson = pm.response.json();",
+                  "        }",
+                  "        pm.expect(responseJson).to.be.an('object');",
+                  "        pm.expect(Array.isArray(responseJson)).to.eql(false);",
+                  "    });",
+                  "",
+                  "    pm.test('Successful response contains the requested id', function () {",
+                  "        if (!responseJson) {",
+                  "            responseJson = pm.response.json();",
+                  "        }",
+                  "        const requestedId = pm.variables.get('id') || '7';",
+                  "        pm.expect(String(responseJson.id)).to.eql(String(requestedId));",
+                  "    });",
+                  "",
+                  "    pm.test('Successful response includes core object fields', function () {",
+                  "        if (!responseJson) {",
+                  "            responseJson = pm.response.json();",
+                  "        }",
+                  "        pm.expect(responseJson).to.have.property('id');",
+                  "        pm.expect(responseJson).to.have.property('name');",
+                  "        pm.expect(responseJson).to.have.property('data');",
+                  "    });",
+                  "} else {",
+                  "    pm.test('Non-success response is captured with an informative message', function () {",
+                  "        if (isJsonLike && !responseJson) {",
+                  "            responseJson = pm.response.json();",
+                  "        }",
+                  "        pm.expect(responseJson || {}).to.be.an('object');",
+                  "        pm.expect(responseJson || {}).to.have.property('error');",
+                  "        pm.expect(String((responseJson || {}).error || '').length).to.be.above(0);",
+                  "    });",
+                  "",
+                  "    pm.test('Current response matches the observed public API limit/error condition', function () {",
+                  "        if (isJsonLike && !responseJson) {",
+                  "            responseJson = pm.response.json();",
+                  "        }",
+                  "        const message = String((responseJson || {}).error || pm.response.text());",
+                  "        pm.expect(message.toLowerCase()).to.include('request limit');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/objects/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "objects",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "7"
+                }
+              ]
+            },
+            "description": "ดึงข้อมูล object เดียวจาก public dataset ตาม ID"
+          },
+          "response": [
+            {
+              "name": "Object พบแล้ว",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/objects/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "objects",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "7"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": \"7\",\n  \"name\": \"Apple MacBook Pro 16\",\n  \"data\": {\n    \"year\": 2019,\n    \"price\": 1849.99,\n    \"CPU model\": \"Intel Core i9\",\n    \"Hard disk size\": \"1 TB\"\n  }\n}"
+            },
+            {
+              "name": "ไม่พบ Object",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/objects/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "objects",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "7"
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"error\": \"Oject with id=999 not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Object - Full Replace (Public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 405', function () {",
+                  "    pm.response.to.have.status(405);",
+                  "});",
+                  "",
+                  "pm.test('Response is valid JSON', function () {",
+                  "    pm.expect(function () {",
+                  "        pm.response.json();",
+                  "    }).to.not.throw();",
+                  "});",
+                  "",
+                  "pm.test('Error message mentions reserved id / cannot be overridden', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('object');",
+                  "    pm.expect(jsonData.error).to.be.a('string');",
+                  "    const errorText = jsonData.error.toLowerCase();",
+                  "    pm.expect(errorText).to.satisfy(function (text) {",
+                  "        return text.includes('reserved id') || text.includes('cannot be overridden') || text.includes('cannot be overridden'.replace('be ', ''));",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.a('number');",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Apple MacBook Pro 16\",\n  \"data\": {\n    \"year\": 2019,\n    \"price\": 2049.99,\n    \"CPU model\": \"Intel Core i9\",\n    \"Hard disk size\": \"1 TB\",\n    \"color\": \"silver\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/objects/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "objects",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "7"
+                }
+              ]
+            },
+            "description": "แทนที่ข้อมูล object ทั้งหมดด้วยข้อมูลใหม่"
+          },
+          "response": [
+            {
+              "name": "Object ถูกอัปเดตสำเร็จ",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Apple MacBook Pro 16\",\n  \"data\": {\n    \"year\": 2019,\n    \"price\": 2049.99,\n    \"CPU model\": \"Intel Core i9\",\n    \"Hard disk size\": \"1 TB\",\n    \"color\": \"silver\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/objects/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "objects",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "7"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": \"7\",\n  \"name\": \"Apple MacBook Pro 16\",\n  \"data\": {\n    \"year\": 2019,\n    \"price\": 2049.99,\n    \"CPU model\": \"Intel Core i9\",\n    \"Hard disk size\": \"1 TB\",\n    \"color\": \"silver\"\n  },\n  \"updatedAt\": \"2022-12-25T21:08:41.986Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Object - Partial (Public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 405', function () {",
+                  "    pm.response.to.have.status(405);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('Error field exists and is a non-empty string', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('error');",
+                  "    pm.expect(json.error).to.be.a('string').and.to.have.length.above(0);",
+                  "});",
+                  "",
+                  "pm.test('Error message mentions reserved id / cannot be overridden', function () {",
+                  "    const errorMessage = pm.response.json().error.toLowerCase();",
+                  "    pm.expect(errorMessage).to.satisfy(function (msg) {",
+                  "        return (msg.includes('reserved id') || msg.includes('reserved')) &&",
+                  "               (msg.includes('cannot be overridden') || msg.includes('cannot be override') || msg.includes('overridden'));",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Apple MacBook Pro 16 (Updated Name)\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/objects/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "objects",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "7"
+                }
+              ]
+            },
+            "description": "อัปเดตเฉพาะบางฟิลด์ของ object โดยไม่แทนที่ทั้งหมด"
+          },
+          "response": [
+            {
+              "name": "Object ถูก patch สำเร็จ",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Apple MacBook Pro 16 (Updated Name)\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/objects/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "objects",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "7"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": \"7\",\n  \"name\": \"Apple MacBook Pro 16 (Updated Name)\",\n  \"data\": {\n    \"year\": 2019,\n    \"price\": 1849.99,\n    \"CPU model\": \"Intel Core i9\",\n    \"Hard disk size\": \"1 TB\"\n  },\n  \"updatedAt\": \"2022-12-25T21:09:46.986Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Object (Public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 405 for reserved id delete\", function () {",
+                  "    pm.response.to.have.status(405);",
+                  "});",
+                  "",
+                  "pm.test(\"Response time is under 2000 ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});",
+                  "",
+                  "pm.test(\"Response body is valid JSON object\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an(\"object\");",
+                  "    pm.expect(jsonData).to.have.property(\"error\");",
+                  "    pm.expect(jsonData.error).to.be.a(\"string\");",
+                  "});",
+                  "",
+                  "pm.test(\"Reserved id 7 returns the expected error message\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.error).to.eql(\"7 is a reserved id and the data object of it cannot be deleted. You can create your own new object via POST request and try to send a DELETE request with new generated object id.\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/objects/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "objects",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "7"
+                }
+              ]
+            },
+            "description": "ลบ object ออกจาก dataset ตาม ID"
+          },
+          "response": [
+            {
+              "name": "Object ถูกลบสำเร็จ",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/objects/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "objects",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "7"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"message\": \"Object with id = 7, has been deleted.\"\n}"
+            }
+          ]
+        }
+      ],
+      "description": "Public endpoints — ไม่ต้องใช้ API Key เหมาะสำหรับทดสอบเบื้องต้น"
+    },
+    {
+      "name": "Auth - Collections",
+      "item": [
+        {
+          "name": "List All My Collections",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/collections?status=404&auth-type=none",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "collections"
+              ],
+              "query": [
+                {
+                  "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                  "key": "status",
+                  "value": "404"
+                },
+                {
+                  "description": "กำหนด auth type — ใช้ jwt เพื่อเข้าถึง endpoint ที่ต้องการ JWT token",
+                  "key": "auth-type",
+                  "value": "none"
+                }
+              ]
+            },
+            "description": "ดึงรายการ collections ทั้งหมดของ user ที่ authenticated พร้อม metadata"
+          },
+          "response": [
+            {
+              "name": "รายการ collections สำเร็จ",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/collections?status=404&auth-type=none",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "collections"
+                  ],
+                  "query": [
+                    {
+                      "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                      "key": "status",
+                      "value": "404"
+                    },
+                    {
+                      "description": "กำหนด auth type — ใช้ jwt เพื่อเข้าถึง endpoint ที่ต้องการ JWT token",
+                      "key": "auth-type",
+                      "value": "none"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"collectionName\": \"phones\",\n    \"objectCount\": 12\n  },\n  {\n    \"collectionName\": \"laptops\",\n    \"objectCount\": 7\n  }\n]"
+            },
+            {
+              "name": "ไม่ได้ยืนยันตัวตน",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/collections?status=404&auth-type=none",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "collections"
+                  ],
+                  "query": [
+                    {
+                      "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                      "key": "status",
+                      "value": "404"
+                    },
+                    {
+                      "description": "กำหนด auth type — ใช้ jwt เพื่อเข้าถึง endpoint ที่ต้องการ JWT token",
+                      "key": "auth-type",
+                      "value": "none"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"error\": \"Object with id=999 not found\"\n}"
+            }
+          ]
+        }
+      ],
+      "description": "Authenticated endpoints — ต้องใส่ x-api-key header"
+    },
+    {
+      "name": "Auth - Objects",
+      "item": [
+        {
+          "name": "List Objects in Collection",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/collections/:collectionName/objects?id=string&id=string&limit=10&offset=0&status=404&auth-type=none",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "collections",
+                ":collectionName",
+                "objects"
+              ],
+              "query": [
+                {
+                  "description": "filter ด้วย object ID หลายตัว เช่น ?id=3&id=5",
+                  "key": "id",
+                  "value": "string"
+                },
+                {
+                  "description": "filter ด้วย object ID หลายตัว เช่น ?id=3&id=5",
+                  "key": "id",
+                  "value": "string"
+                },
+                {
+                  "description": "จำนวน objects สูงสุดที่จะ return",
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "description": "ข้าม objects กี่ตัวก่อนเริ่ม return (ใช้คู่กับ limit สำหรับ pagination)",
+                  "key": "offset",
+                  "value": "0"
+                },
+                {
+                  "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                  "key": "status",
+                  "value": "404"
+                },
+                {
+                  "description": "กำหนด auth type — ใช้ jwt เพื่อเข้าถึง endpoint ที่ต้องการ JWT token",
+                  "key": "auth-type",
+                  "value": "none"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "collectionName",
+                  "value": "products"
+                }
+              ]
+            },
+            "description": "ดึง objects ทั้งหมดใน collection ที่ระบุ รองรับ filter ด้วย id และ pagination"
+          },
+          "response": [
+            {
+              "name": "รายการ objects สำเร็จ",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/collections/:collectionName/objects?id=string&limit=10&offset=0&status=404&auth-type=none",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "collections",
+                    ":collectionName",
+                    "objects"
+                  ],
+                  "query": [
+                    {
+                      "description": "filter ด้วย object ID หลายตัว เช่น ?id=3&id=5",
+                      "key": "id",
+                      "value": "string"
+                    },
+                    {
+                      "description": "จำนวน objects สูงสุดที่จะ return",
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "description": "ข้าม objects กี่ตัวก่อนเริ่ม return (ใช้คู่กับ limit สำหรับ pagination)",
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                      "key": "status",
+                      "value": "404"
+                    },
+                    {
+                      "description": "กำหนด auth type — ใช้ jwt เพื่อเข้าถึง endpoint ที่ต้องการ JWT token",
+                      "key": "auth-type",
+                      "value": "none"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "key": "collectionName",
+                      "value": "products"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"id\": \"7\",\n    \"name\": \"Apple MacBook Pro 16\",\n    \"data\": {\n      \"year\": 2019,\n      \"price\": 1849.99,\n      \"CPU model\": \"Intel Core i9\",\n      \"Hard disk size\": \"1 TB\"\n    }\n  },\n  {\n    \"id\": \"7\",\n    \"name\": \"Apple MacBook Pro 16\",\n    \"data\": {\n      \"year\": 2019,\n      \"price\": 1849.99,\n      \"CPU model\": \"Intel Core i9\",\n      \"Hard disk size\": \"1 TB\"\n    }\n  }\n]"
+            },
+            {
+              "name": "ไม่ได้ยืนยันตัวตน",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/collections/:collectionName/objects?id=string&limit=10&offset=0&status=404&auth-type=none",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "collections",
+                    ":collectionName",
+                    "objects"
+                  ],
+                  "query": [
+                    {
+                      "description": "filter ด้วย object ID หลายตัว เช่น ?id=3&id=5",
+                      "key": "id",
+                      "value": "string"
+                    },
+                    {
+                      "description": "จำนวน objects สูงสุดที่จะ return",
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "description": "ข้าม objects กี่ตัวก่อนเริ่ม return (ใช้คู่กับ limit สำหรับ pagination)",
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                      "key": "status",
+                      "value": "404"
+                    },
+                    {
+                      "description": "กำหนด auth type — ใช้ jwt เพื่อเข้าถึง endpoint ที่ต้องการ JWT token",
+                      "key": "auth-type",
+                      "value": "none"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "key": "collectionName",
+                      "value": "products"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"error\": \"Object with id=999 not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Add Object to Collection",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Apple MacBook Pro 16\",\n  \"data\": {\n    \"year\": 2019,\n    \"price\": 1849.99,\n    \"CPU model\": \"Intel Core i9\",\n    \"Hard disk size\": \"1 TB\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/collections/:collectionName/objects?status=404&auth-type=none",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "collections",
+                ":collectionName",
+                "objects"
+              ],
+              "query": [
+                {
+                  "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                  "key": "status",
+                  "value": "404"
+                },
+                {
+                  "description": "กำหนด auth type — ใช้ jwt เพื่อเข้าถึง endpoint ที่ต้องการ JWT token",
+                  "key": "auth-type",
+                  "value": "none"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "collectionName",
+                  "value": "products"
+                }
+              ]
+            },
+            "description": "สร้าง object ใหม่ใน collection ที่ระบุ ถ้า collection ยังไม่มีจะถูกสร้างอัตโนมัติ"
+          },
+          "response": [
+            {
+              "name": "Object ถูกสร้างสำเร็จ",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Apple MacBook Pro 16\",\n  \"data\": {\n    \"year\": 2019,\n    \"price\": 1849.99,\n    \"CPU model\": \"Intel Core i9\",\n    \"Hard disk size\": \"1 TB\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/collections/:collectionName/objects?status=404&auth-type=none",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "collections",
+                    ":collectionName",
+                    "objects"
+                  ],
+                  "query": [
+                    {
+                      "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                      "key": "status",
+                      "value": "404"
+                    },
+                    {
+                      "description": "กำหนด auth type — ใช้ jwt เพื่อเข้าถึง endpoint ที่ต้องการ JWT token",
+                      "key": "auth-type",
+                      "value": "none"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "key": "collectionName",
+                      "value": "products"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": \"7\",\n  \"name\": \"Apple MacBook Pro 16\",\n  \"data\": {\n    \"year\": 2019,\n    \"price\": 1849.99,\n    \"CPU model\": \"Intel Core i9\",\n    \"Hard disk size\": \"1 TB\"\n  },\n  \"createdAt\": \"2022-11-21T20:06:23.986Z\",\n  \"updatedAt\": \"2022-12-25T21:08:41.986Z\"\n}"
+            },
+            {
+              "name": "ไม่ได้ยืนยันตัวตน",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Apple MacBook Pro 16\",\n  \"data\": {\n    \"year\": 2019,\n    \"price\": 1849.99,\n    \"CPU model\": \"Intel Core i9\",\n    \"Hard disk size\": \"1 TB\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/collections/:collectionName/objects?status=404&auth-type=none",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "collections",
+                    ":collectionName",
+                    "objects"
+                  ],
+                  "query": [
+                    {
+                      "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                      "key": "status",
+                      "value": "404"
+                    },
+                    {
+                      "description": "กำหนด auth type — ใช้ jwt เพื่อเข้าถึง endpoint ที่ต้องการ JWT token",
+                      "key": "auth-type",
+                      "value": "none"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "key": "collectionName",
+                      "value": "products"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"error\": \"Object with id=999 not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Single Object from Collection",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/collections/:collectionName/objects/:id?status=404&auth-type=none",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "collections",
+                ":collectionName",
+                "objects",
+                ":id"
+              ],
+              "query": [
+                {
+                  "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                  "key": "status",
+                  "value": "404"
+                },
+                {
+                  "description": "กำหนด auth type — ใช้ jwt เพื่อเข้าถึง endpoint ที่ต้องการ JWT token",
+                  "key": "auth-type",
+                  "value": "none"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "collectionName",
+                  "value": "products"
+                },
+                {
+                  "key": "id",
+                  "value": "7"
+                }
+              ]
+            },
+            "description": "ดึงข้อมูล object เดียวใน collection ตาม ID"
+          },
+          "response": [
+            {
+              "name": "Object พบแล้ว",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/collections/:collectionName/objects/:id?status=404&auth-type=none",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "collections",
+                    ":collectionName",
+                    "objects",
+                    ":id"
+                  ],
+                  "query": [
+                    {
+                      "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                      "key": "status",
+                      "value": "404"
+                    },
+                    {
+                      "description": "กำหนด auth type — ใช้ jwt เพื่อเข้าถึง endpoint ที่ต้องการ JWT token",
+                      "key": "auth-type",
+                      "value": "none"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "key": "collectionName",
+                      "value": "products"
+                    },
+                    {
+                      "key": "id",
+                      "value": "7"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": \"7\",\n  \"name\": \"Apple MacBook Pro 16\",\n  \"data\": {\n    \"year\": 2019,\n    \"price\": 1849.99,\n    \"CPU model\": \"Intel Core i9\",\n    \"Hard disk size\": \"1 TB\"\n  }\n}"
+            },
+            {
+              "name": "ไม่พบ Object",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/collections/:collectionName/objects/:id?status=404&auth-type=none",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "collections",
+                    ":collectionName",
+                    "objects",
+                    ":id"
+                  ],
+                  "query": [
+                    {
+                      "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                      "key": "status",
+                      "value": "404"
+                    },
+                    {
+                      "description": "กำหนด auth type — ใช้ jwt เพื่อเข้าถึง endpoint ที่ต้องการ JWT token",
+                      "key": "auth-type",
+                      "value": "none"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "key": "collectionName",
+                      "value": "products"
+                    },
+                    {
+                      "key": "id",
+                      "value": "7"
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"error\": \"Object with id=999 not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Object in Collection - Full Replace",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Apple MacBook Pro 16\",\n  \"data\": {\n    \"year\": 2019,\n    \"price\": 2049.99,\n    \"CPU model\": \"Intel Core i9\",\n    \"Hard disk size\": \"1 TB\",\n    \"color\": \"silver\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/collections/:collectionName/objects/:id?status=404&auth-type=none",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "collections",
+                ":collectionName",
+                "objects",
+                ":id"
+              ],
+              "query": [
+                {
+                  "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                  "key": "status",
+                  "value": "404"
+                },
+                {
+                  "description": "กำหนด auth type — ใช้ jwt เพื่อเข้าถึง endpoint ที่ต้องการ JWT token",
+                  "key": "auth-type",
+                  "value": "none"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "collectionName",
+                  "value": "products"
+                },
+                {
+                  "key": "id",
+                  "value": "7"
+                }
+              ]
+            },
+            "description": "แทนที่ข้อมูล object ทั้งหมดใน collection ด้วยข้อมูลใหม่"
+          },
+          "response": [
+            {
+              "name": "Object ถูกอัปเดตสำเร็จ",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Apple MacBook Pro 16\",\n  \"data\": {\n    \"year\": 2019,\n    \"price\": 2049.99,\n    \"CPU model\": \"Intel Core i9\",\n    \"Hard disk size\": \"1 TB\",\n    \"color\": \"silver\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/collections/:collectionName/objects/:id?status=404&auth-type=none",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "collections",
+                    ":collectionName",
+                    "objects",
+                    ":id"
+                  ],
+                  "query": [
+                    {
+                      "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                      "key": "status",
+                      "value": "404"
+                    },
+                    {
+                      "description": "กำหนด auth type — ใช้ jwt เพื่อเข้าถึง endpoint ที่ต้องการ JWT token",
+                      "key": "auth-type",
+                      "value": "none"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "key": "collectionName",
+                      "value": "products"
+                    },
+                    {
+                      "key": "id",
+                      "value": "7"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": \"7\",\n  \"name\": \"Apple MacBook Pro 16\",\n  \"data\": {\n    \"year\": 2019,\n    \"price\": 1849.99,\n    \"CPU model\": \"Intel Core i9\",\n    \"Hard disk size\": \"1 TB\"\n  },\n  \"createdAt\": \"2022-11-21T20:06:23.986Z\",\n  \"updatedAt\": \"2022-12-25T21:08:41.986Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Partially Update Object in Collection",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Apple MacBook Pro 16 (Updated Name)\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/collections/:collectionName/objects/:id?status=404&auth-type=none",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "collections",
+                ":collectionName",
+                "objects",
+                ":id"
+              ],
+              "query": [
+                {
+                  "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                  "key": "status",
+                  "value": "404"
+                },
+                {
+                  "description": "กำหนด auth type — ใช้ jwt เพื่อเข้าถึง endpoint ที่ต้องการ JWT token",
+                  "key": "auth-type",
+                  "value": "none"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "collectionName",
+                  "value": "products"
+                },
+                {
+                  "key": "id",
+                  "value": "7"
+                }
+              ]
+            },
+            "description": "อัปเดตเฉพาะบางฟิลด์ของ object ใน collection"
+          },
+          "response": [
+            {
+              "name": "Object ถูก patch สำเร็จ",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Apple MacBook Pro 16 (Updated Name)\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/collections/:collectionName/objects/:id?status=404&auth-type=none",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "collections",
+                    ":collectionName",
+                    "objects",
+                    ":id"
+                  ],
+                  "query": [
+                    {
+                      "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                      "key": "status",
+                      "value": "404"
+                    },
+                    {
+                      "description": "กำหนด auth type — ใช้ jwt เพื่อเข้าถึง endpoint ที่ต้องการ JWT token",
+                      "key": "auth-type",
+                      "value": "none"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "key": "collectionName",
+                      "value": "products"
+                    },
+                    {
+                      "key": "id",
+                      "value": "7"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": \"7\",\n  \"name\": \"Apple MacBook Pro 16\",\n  \"data\": {\n    \"year\": 2019,\n    \"price\": 1849.99,\n    \"CPU model\": \"Intel Core i9\",\n    \"Hard disk size\": \"1 TB\"\n  },\n  \"createdAt\": \"2022-11-21T20:06:23.986Z\",\n  \"updatedAt\": \"2022-12-25T21:08:41.986Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Object from Collection",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/collections/:collectionName/objects/:id?status=404&auth-type=none",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "collections",
+                ":collectionName",
+                "objects",
+                ":id"
+              ],
+              "query": [
+                {
+                  "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                  "key": "status",
+                  "value": "404"
+                },
+                {
+                  "description": "กำหนด auth type — ใช้ jwt เพื่อเข้าถึง endpoint ที่ต้องการ JWT token",
+                  "key": "auth-type",
+                  "value": "none"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "collectionName",
+                  "value": "products"
+                },
+                {
+                  "key": "id",
+                  "value": "7"
+                }
+              ]
+            },
+            "description": "ลบ object ออกจาก collection ของ user ตาม ID"
+          },
+          "response": [
+            {
+              "name": "Object ถูกลบสำเร็จ",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/collections/:collectionName/objects/:id?status=404&auth-type=none",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "collections",
+                    ":collectionName",
+                    "objects",
+                    ":id"
+                  ],
+                  "query": [
+                    {
+                      "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                      "key": "status",
+                      "value": "404"
+                    },
+                    {
+                      "description": "กำหนด auth type — ใช้ jwt เพื่อเข้าถึง endpoint ที่ต้องการ JWT token",
+                      "key": "auth-type",
+                      "value": "none"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "key": "collectionName",
+                      "value": "products"
+                    },
+                    {
+                      "key": "id",
+                      "value": "7"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"message\": \"Object with id = 7, has been deleted.\"\n}"
+            }
+          ]
+        }
+      ],
+      "description": "CRUD operations บน objects ภายใน collection ของตัวเอง"
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register New User",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@interview.com\",\n  \"password\": \"securePassword123\",\n  \"name\": \"Interview Demo User\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/register?expires-in=3600&status=404",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "register"
+              ],
+              "query": [
+                {
+                  "description": "อายุของ token ในหน่วยวินาที (default = 3600)",
+                  "key": "expires-in",
+                  "value": "3600"
+                },
+                {
+                  "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                  "key": "status",
+                  "value": "404"
+                }
+              ]
+            },
+            "description": "สร้างบัญชีผู้ใช้ใหม่และรับ JWT Token สำหรับใช้กับ authenticated endpoints"
+          },
+          "response": [
+            {
+              "name": "ลงทะเบียนสำเร็จ ได้รับ JWT Token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"demo@interview.com\",\n  \"password\": \"securePassword123\",\n  \"name\": \"Interview Demo User\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/register?expires-in=3600&status=404",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "register"
+                  ],
+                  "query": [
+                    {
+                      "description": "อายุของ token ในหน่วยวินาที (default = 3600)",
+                      "key": "expires-in",
+                      "value": "3600"
+                    },
+                    {
+                      "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                      "key": "status",
+                      "value": "404"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"tokenType\": \"Bearer\",\n  \"expiresIn\": 3600,\n  \"user\": {\n    \"id\": \"123a\",\n    \"email\": \"demo@interview.com\",\n    \"name\": \"Interview Demo User\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@interview.com\",\n  \"password\": \"securePassword123\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login?expires-in=3600&status=404",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login"
+              ],
+              "query": [
+                {
+                  "description": "อายุของ token ในหน่วยวินาที (default = 3600)",
+                  "key": "expires-in",
+                  "value": "3600"
+                },
+                {
+                  "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                  "key": "status",
+                  "value": "404"
+                }
+              ]
+            },
+            "description": "เข้าสู่ระบบด้วย credentials ที่มีอยู่และรับ JWT Token ใหม่"
+          },
+          "response": [
+            {
+              "name": "เข้าสู่ระบบสำเร็จ ได้รับ JWT Token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"demo@interview.com\",\n  \"password\": \"securePassword123\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/login?expires-in=3600&status=404",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "login"
+                  ],
+                  "query": [
+                    {
+                      "description": "อายุของ token ในหน่วยวินาที (default = 3600)",
+                      "key": "expires-in",
+                      "value": "3600"
+                    },
+                    {
+                      "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                      "key": "status",
+                      "value": "404"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"tokenType\": \"Bearer\",\n  \"expiresIn\": 3600,\n  \"user\": {\n    \"id\": \"123a\",\n    \"email\": \"demo@interview.com\",\n    \"name\": \"Interview Demo User\"\n  }\n}"
+            },
+            {
+              "name": "Credentials ไม่ถูกต้อง",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"demo@interview.com\",\n  \"password\": \"securePassword123\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/login?expires-in=3600&status=404",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "login"
+                  ],
+                  "query": [
+                    {
+                      "description": "อายุของ token ในหน่วยวินาที (default = 3600)",
+                      "key": "expires-in",
+                      "value": "3600"
+                    },
+                    {
+                      "description": "Override HTTP status code สำหรับทดสอบ error handling เช่น ?status=401 หรือ ?status=NOT_FOUND",
+                      "key": "status",
+                      "value": "404"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"error\": \"Object with id=999 not found\"\n}"
+            }
+          ]
+        }
+      ],
+      "description": "Register และ Login เพื่อรับ JWT Token"
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.restful-api.dev"
+    }
+  ]
+}

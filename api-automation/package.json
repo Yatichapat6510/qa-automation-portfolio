@@ -1,0 +1,18 @@
+{
+  "name": "api-automation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Postman API automation run with Newman",
+  "scripts": {
+    "clean:reports": "rimraf reports && mkdir reports",
+    "test": "npm run clean:reports && npm run test:practice",
+    "test:practice": "newman run collections/practice/practice-api-testing-demo.postman_collection.json -e environments/jsonplaceholder.postman_environment.json --reporters cli,htmlextra --reporter-htmlextra-export reports/newman-report.html --reporter-htmlextra-title 'API Automation Report' --reporter-htmlextra-browserTitle 'API Automation Report'",
+    "test:restful-public": "newman run collections/restful-api/restful-api-basic-crud.postman_collection.json -e environments/restful-api.postman_environment.json --reporters cli,htmlextra --reporter-htmlextra-export reports/restful-public-report.html",
+    "test:restful-auth": "newman run collections/restful-api/restful-api-authenticated-flow.postman_collection.json -e environments/restful-api.postman_environment.json --reporters cli,htmlextra --reporter-htmlextra-export reports/restful-auth-report.html"
+  },
+  "devDependencies": {
+    "newman": "^6.2.1",
+    "newman-reporter-htmlextra": "^1.23.1",
+    "rimraf": "^6.0.1"
+  }
+}

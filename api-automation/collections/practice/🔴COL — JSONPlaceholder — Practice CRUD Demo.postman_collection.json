@@ -1,11 +1,11 @@
 {
   "info": {
-    "_postman_id": "423ab9cd-2c2d-468a-a693-ad64677c1926",
-    "name": "🎯Practice API Testing Demo",
+    "_postman_id": "f328c853-6ae5-4f5c-bbde-749f9d86ef15",
+    "name": "🔴COL — JSONPlaceholder — Practice CRUD Demo",
     "description": "Demo collection  \nครอบคลุม CRUD operations พร้อม Tests และ Examples\n\nContact Support:  \nName: JSONPlaceholder",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "54137584",
-    "_collection_link": "https://go.postman.co/collection/54137584-423ab9cd-2c2d-468a-a693-ad64677c1926?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/54137584-f328c853-6ae5-4f5c-bbde-749f9d86ef15?source=collection_link"
   },
   "item": [
     {
@@ -13,6 +13,22 @@
       "item": [
         {
           "name": "Get All Posts",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('GET posts returns 200', function () { pm.response.to.have.status(200); });",
+                  "const posts = pm.response.json();",
+                  "pm.test('GET posts returns up to five posts for user 1', function () {",
+                  "    pm.expect(posts).to.be.an('array').and.to.have.length.of.at.most(5);",
+                  "    posts.forEach(function (post) { pm.expect(post.userId).to.equal(1); });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
@@ -31,14 +47,14 @@
               ],
               "query": [
                 {
-                  "description": "Filter posts by user ID",
                   "key": "userId",
-                  "value": "1"
+                  "value": "1",
+                  "description": "Filter posts by user ID"
                 },
                 {
-                  "description": "Limit number of results",
                   "key": "_limit",
-                  "value": "5"
+                  "value": "5",
+                  "description": "Limit number of results"
                 }
               ]
             },
@@ -98,7 +114,7 @@
               "listen": "prerequest",
               "script": {
                 "exec": [
-                  "console.log(\"before send request\");"
+                  "pm.variables.set('requestStartedAt', new Date().toISOString());"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -109,9 +125,14 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Successful POST request\", function () {\r",
-                  "    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
-                  "});"
+                  "pm.test('POST creates a post with 201', function () { pm.response.to.have.status(201); });",
+                  "const createdPost = pm.response.json();",
+                  "pm.test('POST response contains the submitted data and an id', function () {",
+                  "    pm.expect(createdPost.id).to.be.a('number');",
+                  "    pm.expect(createdPost.title).to.equal('My Testing Demo Post');",
+                  "    pm.expect(createdPost.userId).to.equal(1);",
+                  "});",
+                  "pm.collectionVariables.set('createdPostId', String(createdPost.id));"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -203,6 +224,24 @@
         },
         {
           "name": "Update Post (Full)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('PUT updates post 1 with 200', function () { pm.response.to.have.status(200); });",
+                  "const updatedPost = pm.response.json();",
+                  "pm.test('PUT response reflects the complete replacement', function () {",
+                  "    pm.expect(updatedPost.id).to.equal(1);",
+                  "    pm.expect(updatedPost.title).to.equal('Updated Post Title for Interview');",
+                  "    pm.expect(updatedPost.body).to.equal('Updated content demonstrating PUT request');",
+                  "    pm.expect(updatedPost.userId).to.equal(1);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
             "header": [
@@ -301,6 +340,22 @@
         },
         {
           "name": "Update Post (Partial)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('PATCH updates post 1 with 200', function () { pm.response.to.have.status(200); });",
+                  "const patchedPost = pm.response.json();",
+                  "pm.test('PATCH response contains only the patched title and id', function () {",
+                  "    pm.expect(patchedPost.id).to.equal(1);",
+                  "    pm.expect(patchedPost.title).to.equal('Patched Title Only');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "PATCH",
             "header": [
@@ -399,6 +454,18 @@
         },
         {
           "name": "Delete Post",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('DELETE post 1 returns 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('DELETE response is valid JSON', function () { pm.expect(pm.response.json()).to.be.an('object'); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "DELETE",
             "header": [
@@ -469,6 +536,22 @@
         },
         {
           "name": "Get Post by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('GET post 1 returns 200', function () { pm.response.to.have.status(200); });",
+                  "const post = pm.response.json();",
+                  "pm.test('GET post has the expected schema', function () {",
+                  "    pm.expect(post.id).to.equal(1);",
+                  "    pm.expect(post).to.include.all.keys('userId', 'id', 'title', 'body');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
@@ -584,6 +667,22 @@
       "item": [
         {
           "name": "Get All Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('GET users returns 200', function () { pm.response.to.have.status(200); });",
+                  "const users = pm.response.json();",
+                  "pm.test('GET users returns a non-empty array with user fields', function () {",
+                  "    pm.expect(users).to.be.an('array').and.to.not.be.empty;",
+                  "    pm.expect(users[0]).to.include.all.keys('id', 'name', 'username', 'email');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
@@ -640,6 +739,22 @@
         },
         {
           "name": "Get User by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('GET user 1 returns 200', function () { pm.response.to.have.status(200); });",
+                  "const user = pm.response.json();",
+                  "pm.test('GET user has the expected id and schema', function () {",
+                  "    pm.expect(user.id).to.equal(1);",
+                  "    pm.expect(user).to.include.all.keys('name', 'username', 'email');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
@@ -733,7 +848,7 @@
               "_postman_previewlanguage": "text",
               "header": [],
               "cookie": [],
-              "body": null
+              "body": ""
             }
           ]
         }
@@ -745,6 +860,25 @@
       "item": [
         {
           "name": "Get Comments for Post",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('GET comments for post 1 returns 200', function () { pm.response.to.have.status(200); });",
+                  "const comments = pm.response.json();",
+                  "pm.test('Comments belong to post 1 and expose required fields', function () {",
+                  "    pm.expect(comments).to.be.an('array').and.to.not.be.empty;",
+                  "    comments.forEach(function (comment) {",
+                  "        pm.expect(comment.postId).to.equal(1);",
+                  "        pm.expect(comment).to.include.all.keys('id', 'name', 'email', 'body');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
@@ -823,6 +957,10 @@
     {
       "key": "baseUrl",
       "value": "https://jsonplaceholder.typicode.com"
+    },
+    {
+      "key": "createdPostId",
+      "value": ""
     }
   ]
 }

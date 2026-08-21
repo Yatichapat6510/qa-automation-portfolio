@@ -1,11 +1,11 @@
 {
   "info": {
-    "_postman_id": "39509cf8-ba60-4f02-af03-8ef4496ac36b",
-    "name": "🌱 restful-api",
+    "_postman_id": "1ceb5924-c312-48c2-ba14-b15369cd2370",
+    "name": "🟡COL — RESTful API — Public CRUD — Basic",
     "description": "Collection API Testing  \nไล่ทีละขั้น GET → POST → PUT → PATCH → DELETE  \nทุก request มี Test Script ตามความเข้าใจ",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "54137584",
-    "_collection_link": "https://go.postman.co/collection/54137584-39509cf8-ba60-4f02-af03-8ef4496ac36b?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/54137584-1ceb5924-c312-48c2-ba14-b15369cd2370?source=collection_link"
   },
   "item": [
     {

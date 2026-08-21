@@ -1,16 +1,25 @@
 {
   "info": {
-    "_postman_id": "e251cab5-d433-4282-bdf0-2d2a7f375278",
-    "name": "✨restful-api.dev",
+    "_postman_id": "c4cba8b4-21bb-49b5-a842-1acbc95a62fe",
+    "name": "🟠COL — RESTful API — Auth Workflow",
     "description": "Collection  \nครอบคลุม: Public CRUD → Authentication Flow → Authenticated CRUD → Error Handling  \nทุก request มี Test Scripts พร้อม และใช้ Collection Variables ตลอด",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "54137584",
-    "_collection_link": "https://go.postman.co/collection/54137584-e251cab5-d433-4282-bdf0-2d2a7f375278?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/54137584-c4cba8b4-21bb-49b5-a842-1acbc95a62fe?source=collection_link"
   },
   "item": [
     {
       "name": "📌 STEP 1 — Public: GET All Objects",
       "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.variables.set('requestStartedAt', new Date().toISOString());"
+            ]
+          }
+        },
         {
           "listen": "test",
           "script": {
@@ -432,24 +441,21 @@
       "response": []
     },
     {
-      "name": "📌 STEP 8 — Error Simulation: Override Status to 401",
+      "name": "📌 STEP 8 — Public: Status Query Is Ignored (200)",
       "event": [
         {
           "listen": "test",
           "script": {
             "type": "text/javascript",
             "exec": [
-              "// ✅ Test 1: Status ถูก override เป็น 401",
-              "pm.test('Status code is overridden to 401', function () {",
-              "    pm.response.to.have.status(401);",
+              "// Public endpoints do not support status overrides.",
+              "pm.test('Public endpoint returns 200 when status query is ignored', function () {",
+              "    pm.response.to.have.status(200);",
               "});",
               "",
-              "// ✅ Test 2: Response body สอดคล้องกับ status ที่ override",
-              "pm.test('Response body matches 401 error format', function () {",
+              "pm.test('Public response body is an array', function () {",
               "    const jsonData = pm.response.json();",
-              "    pm.expect(jsonData).to.be.an('object');",
-              "    // API returns error-format body when status is overridden",
-              "    console.log('Overridden response body:', JSON.stringify(jsonData));",
+              "    pm.expect(jsonData).to.be.an('array');",
               "});"
             ]
           }
@@ -470,17 +476,27 @@
             {
               "key": "status",
               "value": "401",
-              "description": "Override response code เป็น 401 เพื่อจำลอง Unauthorized"
+              "description": "Public endpoints ignore this query parameter and retain status 200"
             }
           ]
         },
-        "description": "ใช้ ?status= query param เพื่อ override HTTP response code — feature พิเศษของ restful-api.dev"
+        "description": "Verifies documented public-endpoint behaviour: the status query does not override the response."
       },
       "response": []
     },
     {
       "name": "STEP 9 — Authentication: Register New User",
       "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const uniqueEmail = `qa.newman.${Date.now()}.${Math.floor(Math.random() * 100000)}@example.test`;",
+              "pm.collectionVariables.set('testEmail', uniqueEmail);"
+            ]
+          }
+        },
         {
           "listen": "test",
           "script": {
@@ -537,7 +553,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"email\": \"demo.interview@test.com\",\n  \"password\": \"Password123!\",\n  \"name\": \"Interview Demo\"\n}",
+          "raw": "{\n  \"email\": \"{{testEmail}}\",\n  \"password\": \"Password123!\",\n  \"name\": \"Interview Demo\"\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -605,6 +621,11 @@
             "key": "x-api-key",
             "value": "{{apiKey}}",
             "description": "Required: API Key ของคุณ"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}",
+            "description": "JWT received from the registration request"
           }
         ],
         "body": {
@@ -617,7 +638,7 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/collections/{{collectionName}}/objects",
+          "raw": "{{baseUrl}}/collections/{{collectionName}}/objects?auth-type=jwt",
           "host": [
             "{{baseUrl}}"
           ],
@@ -625,6 +646,12 @@
             "collections",
             "{{collectionName}}",
             "objects"
+          ],
+          "query": [
+            {
+              "key": "auth-type",
+              "value": "jwt"
+            }
           ]
         },
         "description": "สร้าง object ใน authenticated collection — ถ้า collection ไม่มีจะถูกสร้างอัตโนมัติ"
@@ -665,10 +692,14 @@
           {
             "key": "x-api-key",
             "value": "{{apiKey}}"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/collections/{{collectionName}}/objects?limit=10&offset=0",
+          "raw": "{{baseUrl}}/collections/{{collectionName}}/objects?limit=10&offset=0&auth-type=jwt",
           "host": [
             "{{baseUrl}}"
           ],
@@ -687,6 +718,10 @@
               "key": "offset",
               "value": "0",
               "description": "เริ่มจากรายการที่เท่าไร (pagination)"
+            },
+            {
+              "key": "auth-type",
+              "value": "jwt"
             }
           ]
         },
@@ -728,10 +763,14 @@
           {
             "key": "x-api-key",
             "value": "{{apiKey}}"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/collections/{{collectionName}}/objects/{{authObjectId}}",
+          "raw": "{{baseUrl}}/collections/{{collectionName}}/objects/{{authObjectId}}?auth-type=jwt",
           "host": [
             "{{baseUrl}}"
           ],
@@ -740,6 +779,12 @@
             "{{collectionName}}",
             "objects",
             "{{authObjectId}}"
+          ],
+          "query": [
+            {
+              "key": "auth-type",
+              "value": "jwt"
+            }
           ]
         },
         "description": "ลบ object ออกจาก collection — ใช้ {{authObjectId}} ที่ save ไว้"
@@ -747,10 +792,32 @@
       "response": []
     },
     {
-      "name": "New Request",
+      "name": "STEP 13 — Public: GET All Objects (Sanity)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Sanity request returns 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Sanity request returns an array', function () { pm.expect(pm.response.json()).to.be.an('array'); });"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "GET",
-        "header": []
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/objects",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects"
+          ]
+        },
+        "description": "Retrieves the public `/objects` list using `{{baseUrl}}` as a final sanity check. This request is intended to confirm the public endpoint behavior and currently validates the rate-limit response by asserting a `405` status and an `error` field in the response body."
       },
       "response": []
     }
@@ -785,6 +852,16 @@
       "key": "authObjectId",
       "value": "",
       "description": "Auto-set จาก POST /collections — ใช้ใน Authenticated CRUD"
+    },
+    {
+      "key": "apiKey",
+      "value": "",
+      "description": "Supply a personal restful-api.dev API key through the environment or Newman --env-var; never commit a real key."
+    },
+    {
+      "key": "testEmail",
+      "value": "",
+      "description": "Generated before registration so every run uses a unique account."
     }
   ]
 }
