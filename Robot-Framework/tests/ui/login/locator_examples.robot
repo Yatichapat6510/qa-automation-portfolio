@@ -17,22 +17,26 @@ ${PASSWORD}       secret_sauce
 TC001 Locator Strategy Examples
 
     Open Browser        ${URL}    ${BROWSER}
+    Maximize Browser Window
 
-    # By ID — ดีที่สุด ใช้ก่อนเสมอ
+    # By ID — best for login form fields
     Input Text        id:user-name    ${USERNAME}
     Input Password    id:password     ${PASSWORD}
 
-    # By CSS
+    # By CSS selector
     Click Button      css:input[data-test='login-button']
+    Wait Until Page Contains    Products    timeout=10s
 
-    # By data-testid (best practice จาก dev)
-    Click Element     css:[data-testid='checkout-btn']
+    # By CSS on inventory page
+    Click Button      css:button[data-test='add-to-cart-sauce-labs-backpack']
+    Wait Until Element Is Visible    css:button[data-test='remove-sauce-labs-backpack']    timeout=10s
 
-    # By XPath — ใช้เมื่อ id/css ไม่มี
-    Click Element     xpath://button[contains(text(),'Add to cart')]
+    # By XPath — find a matching product button on the inventory list
+    Click Element     xpath://button[contains(@data-test, 'add-to-cart-sauce-labs-bike-light')]
+    Wait Until Element Is Visible    xpath://button[contains(@data-test, 'remove-sauce-labs-bike-light')]    timeout=10s
 
-    # By class — ตรวจสอบ error message
-    Element Should Be Visible    class:error-message-container
+    # By class — verify the products list is loaded
+    Element Should Be Visible    class:inventory_list
 
     [Teardown]    Close Browser
 

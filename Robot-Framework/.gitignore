@@ -1,7 +1,17 @@
-results/*.xml
-results/*.html
-!results/.gitkeep
+# Robot Framework test artifacts
+/log.html
+/report.html
+/output.xml
+/fullrun.txt
+/out*.txt
+/results/*
+!/results/.gitkeep
+
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Browser and IDE logs/settings
 *.log
 geckodriver*.log
-__pycache__/
-*.pyc
+**/.vscode/

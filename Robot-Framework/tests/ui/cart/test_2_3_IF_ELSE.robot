@@ -15,8 +15,7 @@ Resource    ../../../resources/ui_keywords.robot
 *** Keywords ***
 Dismiss Cookie Banner If Visible
     [Documentation]    ปิด cookie banner ถ้ามี — ไม่ fail ถ้าไม่มี
-    ${visible}=    Run Keyword And Return Status
-    ...    Element Should Be Visible    id:cookie-banner
+    ${visible}=    Run Keyword And Return Status    Page Should Contain Element    id:cookie-banner
 
     IF    ${visible}
         Click Button    id:accept-cookies
@@ -29,9 +28,12 @@ Dismiss Cookie Banner If Visible
 Safe Click If Exists
     [Arguments]    ${locator}
     [Documentation]    คลิก element ถ้ามีอยู่ — ไม่ fail ถ้าไม่มี
-    ${exists}=    Run Keyword And Return Status
-    ...    Page Should Contain Element    ${locator}
-    IF    ${exists}    Click Element    ${locator}
+    ${exists}=    Run Keyword And Return Status    Page Should Contain Element    ${locator}
+    IF    ${exists}
+        Click Element    ${locator}
+    ELSE
+        Log    Element ${locator} not found; skipping click
+    END
 
 
 *** Test Cases ***
