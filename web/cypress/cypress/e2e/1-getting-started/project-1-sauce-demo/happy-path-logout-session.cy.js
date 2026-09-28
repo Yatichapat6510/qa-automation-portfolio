@@ -1,6 +1,6 @@
 // เขียน test ครบ 3 case แรก: login สำเร็จ, logout กลับหน้า login, refresh แล้วยังอยู่หน้า products
 
-import loginPage from '../pages/LoginPage'
+import loginPage from '../../../pages/LoginPage'
 
 describe('Login Happy Path', () => {
   beforeEach(() => {
