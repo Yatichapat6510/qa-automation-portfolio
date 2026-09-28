@@ -18,7 +18,6 @@ QA engineer focused on building reliable, maintainable automated checks and comm
 
 - LinkedIn: Yatichapat Kanta (https://www.linkedin.com/in/yatichapat-kanta-8a486b393/)
 - E-mail: newtytwenty6510@gmail.com
-- GitHub: @Yatichapat6510 · this repository: qa-automation-portfolio
 
 ## Where to start (2-minute tour)
 
