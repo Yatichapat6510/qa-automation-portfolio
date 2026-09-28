@@ -6,7 +6,7 @@ Suite Teardown     Close All Browsers
 
 *** Variables ***
 
-${URL}            http://www.saucedemo.com
+${URL}            https://www.saucedemo.com
 ${BROWSER}        chrome
 ${USERNAME}       standard_user
 ${PASSWORD}       secret_sauce
@@ -20,7 +20,7 @@ TC001 Valid Login Should Succeed
     Input Text             id:user-name  ${USERNAME}
     Input Password         id:password   ${PASSWORD}
     Click Button           id:login-button
-    Page Should Contain    Products
+    Wait Until Page Contains    Products    timeout=20s
     [Teardown]    Teardown With Screenshot On Failure
 
 TC002 Invalid Login Should Show Error
@@ -47,11 +47,13 @@ TC004 Test Login
 
 TC005 Test Cart
     Login As User    standard_user    secret_sauce
-    Click Button    xpath://button[@id='add-to-cart-sauce-labs-backpack']
+    Wait Until Element Is Visible    id:add-to-cart-sauce-labs-backpack    timeout=20s
+    Click Button    id:add-to-cart-sauce-labs-backpack
     Close Browser
 
 TC006 Test Checkout
     Login As User    standard_user    secret_sauce
+    Wait Until Element Is Visible    class:shopping_cart_link    timeout=20s
     Click Element   class:shopping_cart_link
     Close Browser
 
@@ -68,11 +70,12 @@ Login As User
     Input Text        id:user-name     ${username}
     Input Password    id:password      ${password}
     Wait Until Element Is Visible    id:login-button    timeout=10s
-    Click Button      id:login-button  
+    Click Button      id:login-button
+    Wait Until Page Contains Element    class:inventory_list    timeout=20s
 
 Verify User Is On Products Page
     [Documentation]    Verify login succeeded and user is on Products page
-    Page Should Contain        Products
+    Wait Until Page Contains   Products    timeout=20s
     Location Should Contain    inventory
 
 Verify Error Message Contains
@@ -83,6 +86,7 @@ Verify Error Message Contains
 Add Product To Cart
     [Arguments]        ${product_name}
     [Documentation]    Add product to cart by searching for its name
+    Wait Until Element Is Visible    xpath://div[text()='${product_name}']    timeout=20s
     Click Button       xpath://div[text()='${product_name}']/ancestor::div[@class='inventory_item']//button
 
 Verify Cart Count
