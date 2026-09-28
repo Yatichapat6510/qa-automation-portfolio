@@ -45,6 +45,7 @@ TC001 Locator Strategy Examples On Inventory Page
     Click Button      css:input[data-test='login-button']
 
     # By XPath — ใช้เมื่อ id/css ไม่มี
+    Wait Until Element Is Visible    xpath://button[contains(text(),'Add to cart')]    timeout=20s
     Click Element     xpath://button[contains(text(),'Add to cart')]
 
     [Teardown]    Close Browser
