@@ -1,26 +1,40 @@
-# Content Inventory and Safe Migration Map
+# Content Inventory and Migration Map
 
-This document maps existing work without moving test scripts or changing relative imports.
+Maps where each piece of work lives after the capability-based restructure and how it may be promoted.
 
-| Existing location | Classification | Portfolio destination / action |
+| Location | Classification | Portfolio action |
 | --- | --- | --- |
-| `Playwright/tests/e2e/` | Active executable suite | Present through `projects/web-playwright.md` |
-| `Playwright/tests/practice/` | Learning material | Keep isolated; promote only verified scenarios |
-| `cypress/cypress/e2e/1-getting-started/` | Candidate showcase flow | Document and refine as the Cypress featured suite |
-| `cypress/cypress/e2e/2-advanced-examples/` | Framework learning material | Retain as supporting practice |
-| `Robot-Framework/tests/` and `resources/` | Candidate showcase suites | Add dependency/run documentation, then promote tagged flows |
-| `Robot-Framework/sandbox/` and `practice/` | Learning material | Keep out of CI/showcase claims |
-| `Workshops/QA-Automation-Workshop/` | Curriculum and multi-tool source material | Retain as learning lab; extract focused projects only after validation |
-| `Workshops/Workshop/` | Mixed workshop exercises | Use as source for API, SQL, JMeter, and Appium showcase projects |
-| `results/`, `playwright-report/`, `test-results/`, Robot HTML/XML outputs | Generated test evidence | Keep ignored; upload fresh copies through CI artifacts |
+| `web/playwright/tests/e2e/` | Active executable suite (2 projects, 7 specs) | Presented through `projects/web-playwright.md` |
+| `web/playwright/tests/practice/` | Learning material | Keep isolated; promote only verified scenarios |
+| `web/cypress/cypress/e2e/1-getting-started/project-1-sauce-demo/` | Showcase specs (run in CI) | Add GIF and business-risk note |
+| `web/cypress/cypress/e2e/2-advanced-examples/` | Framework learning material | Retain as supporting practice; not in CI |
+| `web/robot-framework/tests/` and `resources/` | Tagged suites (`smoke`, `regression`, `integration`) | Promote one UI and one API flow |
+| `web/robot-framework/sandbox/`, `practice/`, `e2e-flow/` | Learning / exercise | Keep out of CI and showcase claims |
+| `api/postman-newman/` | Runnable API project with CI | Add schema checks and coverage table |
+| `mobile/appium/`, `mobile/maestro/` | Foundation (smoke level) | Add login-to-checkout flow |
+| `learning/workshops/qa-automation-workshop/` | 8-week curriculum, multi-tool | Retain as learning lab; extract projects after validation |
+| `learning/workshops/workshop-1-mixed-exercises/` | Mixed exercises (SQL, JMeter, Postman, Robot, Playwright) | Source for SQL and JMeter showcase projects |
+| `learning/workshops/workshop-2-saucedemo/` | Same scenario in Playwright and Python | Reference for POM comparison |
+| `docs/internal/` | Working reports from the earlier restructure | Not portfolio content |
+| `results/`, `playwright-report/`, `ortoni-report/`, `test-results/` | Generated evidence | Ignored by Git; publish through CI artifacts |
 
-## Files intentionally not moved
+## Restructure summary
 
-No script, package file, configuration file, or raw report was moved in this restructuring. Their paths may be used by imports, commands, or workflows. The new documentation layer is designed to be compatible with current execution.
+| Old path | New path |
+| --- | --- |
+| `Playwright/` | `web/playwright/` |
+| `cypress/` | `web/cypress/` |
+| `Robot-Framework/` | `web/robot-framework/` |
+| `api-automation/` | `api/postman-newman/` |
+| `Appium/`, `Maestro/` | `mobile/appium/`, `mobile/maestro/` |
+| `Workshops/` | `learning/workshops/` |
+| Workflows inside sub-folders | `.github/workflows/` (root) |
+
+Internal structure of each project was not changed, so relative imports and configuration still resolve.
 
 ## Future extraction order
 
-1. Keep `Playwright/` as the flagship inside this repository.
-2. Create a polished `api-automation-newman` project from the workshop material.
-3. Create an `appium-mobile-mini-project` with its own dependencies and device matrix.
-4. Create `performance-jmeter-test-lab` only after adding a workload model and analysis.
+1. Keep `web/playwright/` as the flagship inside this repository.
+2. Extract `api/postman-newman/` as a standalone repo if it grows (contract tests, mock server).
+3. Build a runnable Appium mini project with its own device matrix.
+4. Create a JMeter test lab only after adding a workload model and analysis.

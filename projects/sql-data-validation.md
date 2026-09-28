@@ -1,6 +1,6 @@
 # SQL for QA and Data Validation
 
-**Current material:** [`Workshops/Workshop/beginner_exercises.sql`](../Workshops/Workshop/beginner_exercises.sql)
+**Current material:** [`learning/workshops/workshop-1-mixed-exercises/beginner_exercises.sql`](../learning/workshops/workshop-1-mixed-exercises/beginner_exercises.sql)
 
 ## Target showcase layout
 

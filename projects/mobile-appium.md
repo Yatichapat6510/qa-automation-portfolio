@@ -1,25 +1,32 @@
 # Mobile Automation with Appium
 
-**Current material:** [`Workshops/QA-Automation-Workshop/week06-mobile-appium`](../Workshops/QA-Automation-Workshop/week06-mobile-appium/)
+**Implementation:** [`mobile/appium/`](../mobile/appium/)
+**Stack:** Appium 2 (UiAutomator2), Robot Framework AppiumLibrary, Python client
+**Target app:** Sauce Labs *My Demo App* (Android)
 
-The existing Appium material is retained as a learning foundation. Create a focused, independently runnable mini project before making this a featured repository.
+## Current evidence
+
+- Robot smoke test that opens the app and asserts the product list is visible (`tests/test.robot`).
+- Python smoke script that starts an Appium session with W3C options (`tests/test_smoke.py`).
+- Shared capabilities and keywords in `resources/common_android.resource`.
+- Earlier learning exercises: [`learning/workshops/qa-automation-workshop/week06-mobile-appium`](../learning/workshops/qa-automation-workshop/week06-mobile-appium/).
+
+This is a foundation, not yet a full suite. It proves the toolchain and session setup work.
 
 ## Target showcase layout
 
 ```text
-mobile-appium-test-suite/
-├── tests/android/
-├── tests/ios/
-├── screens/               # Screen Object Model
-├── capabilities/          # Android and iOS capabilities, no secrets
-├── test-data/
+mobile/appium/
+├── tests/android/            # login, catalog, cart, checkout
+├── screens/                  # Screen Object Model
+├── resources/                # capabilities and keywords (no secrets)
 ├── docs/device-matrix.md
 └── README.md
 ```
 
 ## Evidence checklist
 
-- One Android critical flow and, if available, its iOS counterpart.
-- Device/OS matrix with emulator or simulator configuration.
-- Screenshot/video on failure and setup instructions.
-- Documented platform differences, permissions, and known limitations.
+- One Android critical flow (login, add to cart, checkout) with screen objects.
+- Device/OS matrix with emulator configuration.
+- Screenshot on failure and setup instructions.
+- Documented platform differences, permissions and known limitations.

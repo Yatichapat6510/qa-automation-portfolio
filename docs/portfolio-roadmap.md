@@ -1,29 +1,30 @@
 # Portfolio Roadmap
 
-## Phase 1 — Make the current portfolio reviewable
+## Phase 1: make the current portfolio reviewable
 
-1. Replace placeholder contact links in the root README.
-2. Add one GIF and one scrubbed screenshot for the Playwright project.
-3. Complete the Playwright test-strategy template with actual scope and risks.
-4. Verify the root GitHub Actions workflow passes on the default branch.
+1. Record one GIF of the Playwright critical path and one scrubbed report screenshot into `assets/`.
+2. Push and confirm all four workflows (Playwright, Cypress, Robot, Newman) are green on the default branch.
+3. Set repository description, topics and pin the repository on the GitHub profile.
 
-## Phase 2 — Promote one project per capability
+## Phase 2: promote one project per capability
 
-1. Cypress: select one complete Sauce Demo journey and add CI.
-2. Robot Framework: select one UI smoke path and one API test, then document dependencies.
-3. API: select a workshop collection, add Newman and data-driven inputs.
-4. SQL: add focused setup/validation/cleanup examples with synthetic data.
+1. Cypress: one complete Sauce Demo journey with business-risk note.
+2. Robot Framework: one UI smoke path and one API test documented as "start here".
+3. API: schema/contract checks, negative-case collection, data-driven inputs.
+4. SQL: setup, validation and cleanup scripts with synthetic data.
 
-## Phase 3 — Add differentiators
+## Phase 3: add differentiators
 
-1. Containerise one stable suite with Docker.
-2. Add a mock service or deterministic local API dependency.
-3. Create one JMeter report with SLA, workload model, findings, and recommendation.
-4. Create the Appium Android mini-project, then expand to iOS if environment access is available.
+1. Allure (or similar) report published to GitHub Pages.
+2. Docker runner for one stable suite.
+3. Mock service or deterministic local API dependency.
+4. JMeter report with SLA, workload model, findings and recommendation.
+5. Appium Android mini project (login to checkout) and comparable Maestro flows.
+6. Accessibility check (axe-core with Playwright) and a short OWASP-style checklist for the demo app.
 
 ## Definition of done for every featured project
 
-- README explains value, scope, architecture, setup, and run commands.
+- README explains value, scope, architecture, setup and run commands.
 - No secrets or personal data are committed.
 - Tests run locally from a clean clone.
 - CI uploads test evidence.

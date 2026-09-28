@@ -1,10 +1,19 @@
-# Dependencies
+# Dependencies and local caches
 node_modules/
 .playwright-browsers/
+.npm-cache/
+.pytest_cache/
+.venv/
+venv/
 
 # Secrets and local settings
 .env*
+!.env.example
 .claude/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/tasks.json
+.agents/
 
 # Test artifacts and reports
 results/
@@ -12,6 +21,9 @@ screenshots/
 test-results/
 playwright-report/
 blob-report/
+ortoni-report/
+reports/*.html
+reports/*.json
 log.html
 report.html
 output.xml
@@ -30,3 +42,9 @@ __pycache__/
 .pytest_cache/
 .coverage
 .coverage.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/

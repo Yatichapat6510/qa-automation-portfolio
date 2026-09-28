@@ -1,11 +1,11 @@
 # Playwright UI Automation
 
-**Implementation:** [`Playwright/`](../Playwright/)
+**Implementation:** [`web/playwright/`](../web/playwright/)
 **Stack:** JavaScript, Playwright Test, Page Object Model, custom fixtures, API checks, tracing, GitHub Actions
 
 ## Reviewer guide
 
-Start with [`Playwright/README.md`](../Playwright/README.md). The active configuration discovers only deterministic specifications in `tests/e2e/**/specs`. Exercises and drafts live in `tests/practice` and are intentionally excluded from the default run.
+Start with [`web/playwright/README.md`](../web/playwright/README.md). The active configuration discovers only deterministic specifications in `tests/e2e/**/specs`. Exercises and drafts live in `tests/practice` and are intentionally excluded from the default run.
 
 ## Key evidence
 
@@ -23,9 +23,15 @@ Start with [`Playwright/README.md`](../Playwright/README.md). The active configu
 | Checkout | required-field validation and successful completion |
 | API/UI integration | response validation and UI behaviour after API interaction |
 
+## Documentation
+
+- [Test strategy](../web/playwright/docs/portfolio-test-strategy.md): scope, risks, environments, exit criteria.
+- [Structure and ownership rules](../web/playwright/docs/PLAYWRIGHT_STRUCTURE.md).
+- [Example bug reports](../docs/examples/bug-reports/) written against the intentionally faulty Sauce Demo users.
+
 ## Before publishing as the flagship
 
 1. Add one GIF under `assets/gifs/` showing a passing critical path or a Trace Viewer investigation.
-2. Add a scrubbed screenshot of the latest report under `assets/images/`.
-3. Complete `Playwright/docs/portfolio-test-strategy.md` with the exact system under test and scope.
+2. Add a scrubbed screenshot of the latest CI report under `assets/images/`.
+3. Confirm the [Playwright Tests](../.github/workflows/playwright.yml) workflow is green on the default branch.
 4. Keep credentials only in GitHub Secrets or local environment variables.

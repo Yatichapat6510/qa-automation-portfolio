@@ -1,6 +1,6 @@
 # Performance and Load Testing with JMeter
 
-**Current material:** [`Workshops/Workshop/beginner_load_test.jmx`](../Workshops/Workshop/beginner_load_test.jmx) and [`Workshops/QA-Automation-Workshop/week05-performance-jmeter`](../Workshops/QA-Automation-Workshop/week05-performance-jmeter/)
+**Current material:** [`learning/workshops/workshop-1-mixed-exercises/beginner_load_test.jmx`](../learning/workshops/workshop-1-mixed-exercises/beginner_load_test.jmx) and [`learning/workshops/qa-automation-workshop/week05-performance-jmeter`](../learning/workshops/qa-automation-workshop/week05-performance-jmeter/)
 
 ## Target showcase layout
 
