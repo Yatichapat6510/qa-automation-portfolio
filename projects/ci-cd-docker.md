@@ -1,19 +1,26 @@
 # CI/CD and Docker for QA
 
-**Current implementation:** [`.github/workflows/playwright.yml`](../.github/workflows/playwright.yml)
+**Implementation:** [`.github/workflows/`](../.github/workflows/)
 
-The current workflow runs the Playwright suite from its project directory and uploads the Playwright HTML report as an artifact.
+All workflows live at the repository root because GitHub only reads that folder. Each one uses a `paths` filter and `working-directory`, so a change in one project triggers only its own pipeline.
 
-## Current workflow evidence
+| Workflow | Runs | Evidence produced |
+| --- | --- | --- |
+| [`playwright.yml`](../.github/workflows/playwright.yml) | Playwright registered suite on Chrome | HTML report artifact (30 days) |
+| [`cypress.yml`](../.github/workflows/cypress.yml) | Showcase specs in `1-getting-started/` | Failure screenshots |
+| [`robot.yml`](../.github/workflows/robot.yml) | Robot Framework `tests/` under Xvfb | `results/` artifact |
+| [`newman.yml`](../.github/workflows/newman.yml) | JSONPlaceholder suite (+ optional authenticated suite) | Newman HTML report |
 
-- Triggered by relevant push and pull-request changes.
-- Uses dependency caching and a fixed Node version.
-- Installs browser dependencies, executes tests, and uploads the report.
+## Practices in use
+
+- Dependency caching and pinned Node/Python versions.
+- Secrets only through GitHub Secrets; non-secret URLs through GitHub Variables.
+- `permissions: contents: read` where write access is not needed.
+- The optional authenticated API job checks the secret per step, because secrets cannot be used in a job-level `if`.
 
 ## Next improvements
 
-1. Add a smoke workflow for Cypress only after its featured flow is stable.
-2. Add API/Newman CI after creating a reviewed collection and safe environment example.
-3. Add a Dockerfile only for a suite that you can run locally through Docker.
-4. Use GitHub Secrets for credentials and GitHub Variables for non-secret URLs.
-5. Keep full reports as artifacts; optionally deploy only scrubbed static evidence to GitHub Pages.
+1. Add a Dockerfile for one stable suite so it runs with a single `docker compose up`.
+2. Publish a scrubbed Playwright report to GitHub Pages and link it from the root README.
+3. Add a nightly scheduled run and a summary of pass rate over time.
+4. Add a status matrix (browser x suite) once more than one browser is stable.

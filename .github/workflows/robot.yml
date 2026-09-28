@@ -1,0 +1,44 @@
+name: Robot Framework CI
+
+on:
+  push:
+    paths:
+      - 'web/robot-framework/**'
+      - '.github/workflows/robot.yml'
+  pull_request:
+    paths:
+      - 'web/robot-framework/**'
+      - '.github/workflows/robot.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web/robot-framework
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip && pip install -r requirements.txt
+
+      - name: Run Robot Framework tests
+        run: xvfb-run --auto-servernum robot -d results tests/
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-framework-results
+          path: web/robot-framework/results/
+          if-no-files-found: warn
