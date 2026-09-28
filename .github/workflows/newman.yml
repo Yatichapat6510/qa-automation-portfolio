@@ -23,8 +23,8 @@ jobs:
     name: JSONPlaceholder API suite
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 20
           cache: npm
@@ -33,7 +33,7 @@ jobs:
       - run: npm test
       - name: Upload HTML report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: newman-html-report
           path: api/postman-newman/reports/newman-report.html
@@ -47,9 +47,9 @@ jobs:
       RESTFUL_API_KEY: ${{ secrets.RESTFUL_API_KEY }}
     steps:
       # Secrets cannot be used in a job-level `if`, so each step checks the key itself.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         if: ${{ env.RESTFUL_API_KEY != '' }}
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: ${{ env.RESTFUL_API_KEY != '' }}
         with:
           node-version: 20
@@ -61,7 +61,7 @@ jobs:
         if: ${{ env.RESTFUL_API_KEY != '' }}
       - name: Upload authenticated HTML report
         if: ${{ always() && env.RESTFUL_API_KEY != '' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: restful-api-auth-html-report
           path: api/postman-newman/reports/restful-auth-report.html

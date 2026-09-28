@@ -88,6 +88,7 @@ cd web/robot-framework && pip install -r requirements.txt && robot -d results te
 - Risk-based test selection (P0/P1/P2) and a test pyramid that prefers API/data checks over UI where possible.
 - Maintainable structure: Page Object Model, fixtures, shared keywords, separated test data.
 - Deterministic tests: no dependence on real third-party data where a local or public stable target exists.
+- CI resilience: the Robot Framework UI suite targets the third-party demo site saucedemo.com, so it uses explicit/implicit waits and re-runs only the failed tests once in CI (results are merged with `rebot`). Any test that needs the re-run is still visible in the uploaded report.
 - CI on every relevant change with HTML reports and failure evidence uploaded as artifacts.
 - No secrets in the repository: credentials come from GitHub Secrets or local environment variables.
 
