@@ -1,6 +1,7 @@
 *** Settings ***
 Library           SeleniumLibrary
 Library           Collections
+Resource          browser.robot
 
 *** Variables ***
 ${URL}          https://www.saucedemo.com
@@ -10,13 +11,8 @@ ${PASSWORD}     secret_sauce
 
 *** Keywords ***
 Open Browser With Safe Options
-    [Documentation]    Opens browser with safe options to disable Chrome Password Manager
-    &{prefs}=    Create Dictionary
-    ...    credentials_enable_service=${False}
-    ...    profile.password_manager_enabled=${False}
-    ...    profile.password_manager_leak_detection=${False}
-    Open Browser    ${URL}    ${BROWSER}    options=add_argument("--disable-notifications");add_experimental_option("prefs", ${prefs})
-    Maximize Browser Window
+    [Documentation]    Opens Chrome with the password manager disabled (headless when HEADLESS=True)
+    Open Chrome    ${URL}
 
 Login As Standard User
     Open Browser With Safe Options

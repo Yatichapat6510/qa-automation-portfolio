@@ -1,5 +1,6 @@
 *** Settings ***
 
+Resource          ../../../resources/browser.robot
 Library            SeleniumLibrary
 Suite Teardown     Close All Browsers
 
@@ -15,7 +16,7 @@ ${PASSWORD}       secret_sauce
 TC001 Valid Login Should Succeed
 
     [Tags]    smoke    login
-    Open Browser        ${URL}        ${BROWSER}
+    Open Chrome        ${URL}
     Input Text             id:user-name  ${USERNAME}
     Input Password         id:password   ${PASSWORD}
     Click Button           id:login-button
@@ -24,7 +25,7 @@ TC001 Valid Login Should Succeed
 
 TC002 Invalid Login Should Show Error
     [Tags]    regression    login
-    Open Browser           ${URL}           ${BROWSER}
+    Open Chrome        ${URL}
     Input Text             id:user-name  wrong_user
     Input Password         id:password   wrong_pass
     Click Button           id:login-button
@@ -63,8 +64,7 @@ Teardown With Screenshot On Failure
 Login As User
     [Arguments]        ${username}     ${password}
     [Documentation]    Opens browser and logs in with provided credentials
-    Open Browser       ${URL}          ${BROWSER}
-    Maximize Browser Window
+    Open Chrome        ${URL}
     Input Text        id:user-name     ${username}
     Input Password    id:password      ${password}
     Wait Until Element Is Visible    id:login-button    timeout=10s

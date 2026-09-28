@@ -1,5 +1,6 @@
 *** Settings ***
 
+Resource          ../../../resources/browser.robot
 Library            SeleniumLibrary
 Suite Teardown     Close All Browsers
 
@@ -16,8 +17,7 @@ ${PASSWORD}       secret_sauce
 
 TC001 Locator Strategy Examples
 
-    Open Browser        ${URL}    ${BROWSER}
-    Maximize Browser Window
+    Open Chrome        ${URL}
 
     # By ID — best for login form fields
     Input Text        id:user-name    ${USERNAME}

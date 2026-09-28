@@ -1,10 +1,10 @@
 *** Settings ***
+Resource          ../../../resources/browser.robot
 Library    SeleniumLibrary
 
 *** Test Cases ***
 TC Modern Web Testing
-    Open Browser    https://www.saucedemo.com    chrome
-    Maximize Browser Window
+    Open Chrome    https://www.saucedemo.com
     Input Text    id=user-name    standard_user
     Input Password    id=password    secret_sauce
     Click Button    id=login-button
