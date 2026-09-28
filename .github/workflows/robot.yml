@@ -34,12 +34,17 @@ jobs:
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
 
       - name: Run Robot Framework tests
-        run: robot -d results -v HEADLESS:True tests/
+        # saucedemo.com is a third-party site: re-run only the failed tests once, then merge the results
+        run: |
+          robot -d results -v HEADLESS:True tests/ || {
+            robot -d results/rerun -v HEADLESS:True --rerunfailed results/output.xml tests/ || true
+            rebot -d results --merge --output final.xml --log log.html --report report.html results/output.xml results/rerun/output.xml
+          }
 
       - name: Summarise failures
         if: failure()
         run: |
-          python scripts/ci_summary.py results/output.xml >> "$GITHUB_STEP_SUMMARY" || true
+          python scripts/ci_summary.py "$( [ -f results/final.xml ] && echo results/final.xml || echo results/output.xml )" >> "$GITHUB_STEP_SUMMARY" || true
 
       - name: Upload test results
         if: always()

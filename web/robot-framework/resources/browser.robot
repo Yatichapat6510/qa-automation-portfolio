@@ -33,3 +33,6 @@ Open Chrome
         Open Browser    ${target_url}    ${BROWSER}    options=${options}
         Maximize Browser Window
     END
+    # Retry element lookups so slow page loads (CI, saucedemo latency) do not cause flaky failures
+    Set Selenium Implicit Wait    10s
+    Set Selenium Timeout          20s
