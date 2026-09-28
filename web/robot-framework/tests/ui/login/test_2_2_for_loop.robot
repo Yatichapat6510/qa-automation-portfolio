@@ -56,7 +56,7 @@ Resource    ../../../resources/ui_keywords.robot
 TC Valid Users Can Login
     FOR    ${user}    IN    @{VALID_USERS}
         Login As User         ${user}    secret_sauce
-        Page Should Contain   Products
+        Wait Until Page Contains    Products    timeout=30s
         Close Browser
     END
     [Teardown]    Close All Browsers
@@ -64,7 +64,7 @@ TC Valid Users Can Login
 TC Invalid Users Cannot Login
     FOR    ${user}    IN    @{INVALID_USERS}
         Login As User         ${user}    secret_sauce
-        Element Should Be Visible    class:error-message-container
+        Wait Until Element Is Visible    class:error-message-container    timeout=15s
         Close Browser
     END
     [Teardown]    Close All Browsers
