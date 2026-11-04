@@ -1,0 +1,45 @@
+appId: com.saucelabs.mydemoapp.android
+name: "TC-MOB-005 Add product with quantity 2 to cart"
+tags:
+  - smoke
+  - cart
+---
+# [Positive / Edge] เพิ่ม Sauce Labs Backpack จำนวน 2 ชิ้น แล้วตรวจ badge และหน้า My Cart
+- launchApp:
+    clearState: true
+# รอหน้า Products พร้อม (ปิด dialog ของระบบถ้ามี)
+- runFlow: subflows/wait_app_ready.yaml
+# ค่าเริ่มต้นเรียงสินค้าตามชื่อ A→Z ทำให้ Backpack เป็นรูปแรกเสมอ (แอปรับการแตะที่รูปเท่านั้น)
+- tapOn:
+    id: "productIV"
+    index: 0
+# ยืนยันว่าเปิดสินค้าถูกตัว
+- assertVisible:
+    id: "productTV"
+    text: "Sauce Labs Backpack"
+# เลื่อนให้แถวปุ่มจำนวน/Add To Cart อยู่ในจอ
+- scrollUntilVisible:
+    element: "Tap to add product to cart"
+# เพิ่มจำนวนจาก 1 เป็น 2
+- tapOn: "Increase item quantity"
+- assertVisible:
+    id: "noTV"
+    text: "2"
+- tapOn: "Tap to add product to cart"
+# badge บนไอคอนตะกร้าต้องแสดง 2
+- assertVisible:
+    id: "cartTV"
+    text: "2"
+- tapOn: "View cart"
+# ตรวจรายละเอียดในหน้า My Cart
+- assertVisible:
+    id: "titleTV"
+    text: "Sauce Labs Backpack"
+- assertVisible:
+    id: "itemsTV"
+    text: "2 Items"
+# ราคารวม 29.99 x 2 (escape $ และ . เพราะ text เป็น regex)
+- assertVisible:
+    id: "totalPriceTV"
+    text: "\\$ 59\\.98"
+- takeScreenshot: tc_mob_005_cart_two_items

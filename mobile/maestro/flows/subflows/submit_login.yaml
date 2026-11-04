@@ -1,0 +1,12 @@
+appId: com.saucelabs.mydemoapp.android
+---
+# Subflow: กรอก Username/Password จากตัวแปร USERNAME และ PASSWORD แล้วกด Login
+- tapOn:
+    id: "nameET"
+- inputText: ${USERNAME}
+- tapOn:
+    id: "passwordET"
+- inputText: ${PASSWORD}
+# ซ่อนคีย์บอร์ดก่อน เพราะอาจบังปุ่ม Login
+- hideKeyboard
+- tapOn: "Tap to login with given credentials"
