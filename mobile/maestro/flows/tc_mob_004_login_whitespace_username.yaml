@@ -1,0 +1,19 @@
+appId: com.saucelabs.mydemoapp.android
+name: "TC-MOB-004 Login with whitespace-only username"
+tags:
+  - login
+  - edge
+---
+# [Edge] Username ที่มีแต่ช่องว่างต้องถูก trim และถือว่าเป็นค่าว่าง
+- runFlow: subflows/open_login.yaml
+- runFlow:
+    file: subflows/submit_login.yaml
+    env:
+      USERNAME: "   "
+      PASSWORD: "10203040"
+- assertVisible:
+    id: "nameErrorTV"
+    text: "Username is required"
+# ยังคงอยู่หน้า Login
+- assertVisible: "Tap to login with given credentials"
+- takeScreenshot: tc_mob_004_whitespace_username_error

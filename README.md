@@ -4,6 +4,7 @@
 [![Cypress Tests](https://github.com/Yatichapat6510/qa-automation-portfolio/actions/workflows/cypress.yml/badge.svg)](https://github.com/Yatichapat6510/qa-automation-portfolio/actions/workflows/cypress.yml)
 [![Robot Framework CI](https://github.com/Yatichapat6510/qa-automation-portfolio/actions/workflows/robot.yml/badge.svg)](https://github.com/Yatichapat6510/qa-automation-portfolio/actions/workflows/robot.yml)
 [![Newman API Tests](https://github.com/Yatichapat6510/qa-automation-portfolio/actions/workflows/newman.yml/badge.svg)](https://github.com/Yatichapat6510/qa-automation-portfolio/actions/workflows/newman.yml)
+[![Mobile Android CI](https://github.com/Yatichapat6510/qa-automation-portfolio/actions/workflows/mobile.yml/badge.svg)](https://github.com/Yatichapat6510/qa-automation-portfolio/actions/workflows/mobile.yml)
 
 Practical QA and test-automation work across **web UI, API, mobile, performance, database validation and CI/CD**.
 Each showcase page explains the quality goal, test approach, evidence and next improvement, not only the tool used.
@@ -34,8 +35,8 @@ QA engineer focused on building reliable, maintainable automated checks and comm
 | Web UI | [`web/cypress`](web/cypress/) | Cypress, page objects, fixtures | Showcase spec + CI |
 | Web UI / API | [`web/robot-framework`](web/robot-framework/) | Robot Framework, SeleniumLibrary, RequestsLibrary | Tagged suites + CI |
 | API | [`api/postman-newman`](api/postman-newman/) | Postman collections, Newman, htmlextra report | CI active |
-| Mobile | [`mobile/appium`](mobile/appium/) | Appium 2, Robot Framework AppiumLibrary, Python | Smoke foundation |
-| Mobile | [`mobile/maestro`](mobile/maestro/) | Maestro (YAML flows) | Launch-flow foundation |
+| Mobile | [`mobile/appium`](mobile/appium/) | Appium, pytest + Robot Framework (POM), Allure | 6 test cases, CI workflow added |
+| Mobile | [`mobile/maestro`](mobile/maestro/) | Maestro (YAML flows, subflows, tags) | Same 6 test cases as Appium |
 | Performance | JMeter (see [`projects/performance-jmeter.md`](projects/performance-jmeter.md)) | JMeter | Learning material only |
 | Database | SQL validation (see [`projects/sql-data-validation.md`](projects/sql-data-validation.md)) | SQL / SQLite | Learning material only |
 | Learning lab | [`learning/workshops`](learning/workshops/) | Multi-tool course exercises | Not presented as a framework |

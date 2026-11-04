@@ -1,0 +1,20 @@
+appId: com.saucelabs.mydemoapp.android
+name: "TC-MOB-002 Login with locked-out user"
+tags:
+  - login
+  - negative
+---
+# [Negative] บัญชีที่ถูกล็อกต้องแสดง error และไม่เข้าสู่ระบบ
+- runFlow: subflows/open_login.yaml
+- runFlow:
+    file: subflows/submit_login.yaml
+    env:
+      USERNAME: "alice@example.com"
+      PASSWORD: "10203040"
+# ข้อความ error แสดงใต้ช่อง Password (text เป็น regex จึง escape จุดท้ายประโยค)
+- assertVisible:
+    id: "passwordErrorTV"
+    text: "Sorry this user has been locked out\\."
+# ยังคงอยู่หน้า Login
+- assertVisible: "Tap to login with given credentials"
+- takeScreenshot: tc_mob_002_locked_user_error
