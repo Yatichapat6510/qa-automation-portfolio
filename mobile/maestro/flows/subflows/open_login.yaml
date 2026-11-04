@@ -1,0 +1,15 @@
+appId: com.saucelabs.mydemoapp.android
+---
+# Subflow: เปิดแอปแบบ state สะอาด แล้วไปที่หน้า Login ผ่านเมนู
+- launchApp:
+    clearState: true
+# รอหน้า Products พร้อม (ผ่าน Splash screen และปิด dialog ของระบบถ้ามี)
+- runFlow: wait_app_ready.yaml
+# เปิดเมนูด้านซ้าย
+- tapOn: "View menu"
+# เมนู Log In อยู่ท้ายรายการ เลื่อนหาให้เจอก่อนแตะ (กันกรณีจอเล็ก)
+- scrollUntilVisible:
+    element: "Login Menu Item"
+- tapOn: "Login Menu Item"
+# ยืนยันว่าเข้าหน้า Login แล้ว
+- assertVisible: "Tap to login with given credentials"

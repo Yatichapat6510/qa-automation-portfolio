@@ -6,4 +6,5 @@ Suite Teardown    Close Android Application
 *** Test Cases ***
 App Should Open Successfully
     [Tags]    smoke
-    Wait Until Page Contains Element    accessibility_id=test-PRODUCTS    10s
+    # ใช้ content-desc ของรายการสินค้าที่มีอยู่จริงในแอปเวอร์ชันนี้
+    Wait Until Page Contains Element    accessibility_id=Displays all products of catalog    15s

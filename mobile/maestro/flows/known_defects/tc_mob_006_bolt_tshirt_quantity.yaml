@@ -1,0 +1,42 @@
+appId: com.saucelabs.mydemoapp.android
+name: "TC-MOB-006 Bolt T-Shirt adds selected quantity (known defect BUG-004)"
+tags:
+  - cart
+  - known-defect
+---
+# [Negative / Defect] เพิ่ม Bolt T-Shirt 1 ชิ้น badge ต้องแสดง 1
+# flow นี้คาดว่าจะ FAIL จนกว่าบั๊กจะถูกแก้ จึงแยกไว้นอกชุดหลัก (config.yaml ไม่รวมโฟลเดอร์นี้)
+- launchApp:
+    clearState: true
+# รอหน้า Products พร้อม (ปิด dialog ของระบบถ้ามี)
+- runFlow: ../subflows/wait_app_ready.yaml
+# แอปแครชเมื่อแตะสินค้าลำดับที่ 7 ขึ้นไป (BUG-005) จึงเรียงตามราคาก่อน ให้ Bolt T-Shirt ขึ้นมาอยู่ลำดับที่ 3
+- tapOn: "Shows current sorting order and displays available sorting options"
+- tapOn: "Ascending order by price"
+# ยืนยันว่าเรียงใหม่แล้ว: สินค้าแรกต้องเป็น Onesie ($7.99)
+- assertVisible:
+    id: "titleTV"
+    text: "Sauce Labs Onesie"
+    index: 0
+# เมื่อเรียงตามราคา Bolt T-Shirt ($15.99) อยู่ลำดับที่ 3 ต่อจาก Onesie และ Bike Light
+# text เป็น regex แบบตรงทั้งคำ จึงไม่ match รุ่นหลายสี เช่น "(blue)"
+- assertVisible:
+    id: "titleTV"
+    text: "Sauce Labs Bolt T-Shirt"
+# แอปรับการแตะที่รูปเท่านั้น จึงแตะรูปลำดับที่ 3 (index เริ่มที่ 0)
+# ไม่ใช้ selector "above" เพราะ Maestro เลือกรูปแรกที่อยู่เหนือข้อความ ไม่ใช่รูปที่ใกล้ที่สุด
+- tapOn:
+    id: "productIV"
+    index: 2
+# ยืนยันว่าเปิดสินค้าถูกตัวก่อนตรวจผล
+- assertVisible:
+    id: "productTV"
+    text: "Sauce Labs Bolt T-Shirt"
+- scrollUntilVisible:
+    element: "Tap to add product to cart"
+- tapOn: "Tap to add product to cart"
+- takeScreenshot: tc_mob_006_bolt_tshirt_badge
+# ผลที่ถูกต้อง: badge แสดง 1 (ปัจจุบันแอปแสดง 10)
+- assertVisible:
+    id: "cartTV"
+    text: "1"

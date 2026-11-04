@@ -1,0 +1,27 @@
+appId: com.saucelabs.mydemoapp.android
+name: "TC-MOB-001 Login with valid credentials"
+tags:
+  - smoke
+  - login
+---
+# [Positive] Login ด้วยบัญชีที่ถูกต้อง แล้วต้องกลับมาหน้า Products ในสถานะ login แล้ว
+- runFlow: subflows/open_login.yaml
+- runFlow:
+    file: subflows/submit_login.yaml
+    env:
+      USERNAME: "bod@example.com"
+      PASSWORD: "10203040"
+# login สำเร็จแอปจะเปิดหน้า Products ใหม่ รอให้หน้า Login หายก่อนเพื่อไม่ให้กดเมนูระหว่างเปลี่ยนหน้า
+- extendedWaitUntil:
+    notVisible: "Tap to login with given credentials"
+    timeout: 10000
+- extendedWaitUntil:
+    visible: "Displays all products of catalog"
+    timeout: 10000
+# ตรวจสถานะ login จากเมนู: ต้องแสดง Log Out แทน Log In
+- tapOn: "View menu"
+- scrollUntilVisible:
+    element: "Logout Menu Item"
+- assertVisible: "Logout Menu Item"
+- assertNotVisible: "Login Menu Item"
+- takeScreenshot: tc_mob_001_logged_in

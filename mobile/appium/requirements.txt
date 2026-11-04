@@ -1,0 +1,4 @@
+Appium-Python-Client>=4.0
+pytest>=8.0
+robotframework>=7.0
+robotframework-appiumlibrary>=2.1

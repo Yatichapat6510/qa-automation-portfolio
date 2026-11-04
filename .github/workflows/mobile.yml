@@ -1,0 +1,95 @@
+name: Mobile Android CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/mobile.yml'
+  pull_request:
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/mobile.yml'
+  schedule:
+    # รัน regression ทุกวันจันทร์ 01:00 UTC (08:00 เวลาไทย) แม้ไม่มีการเปลี่ยนโค้ด เพื่อจับการเปลี่ยนแปลงของแอปเวอร์ชันใหม่
+    - cron: '0 1 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobile-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      ANDROID_API_LEVEL: 31
+      APP_REPO: saucelabs/my-demo-app-android
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Enable KVM for the Android emulator
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r mobile/appium/requirements.txt allure-pytest allure-robotframework
+          npm install -g appium
+          appium driver install uiautomator2
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Download app APK (latest release)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download --repo "$APP_REPO" --pattern 'mda-[0-9]*.apk' --dir app-build
+          mv app-build/*.apk app-build/my-demo-app.apk
+          ls -l app-build
+
+      - name: Run pytest, Robot Framework and Maestro on the emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.ANDROID_API_LEVEL }}
+          arch: x86_64
+          target: google_apis
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          script: bash mobile/scripts/run-android-ci.sh "$GITHUB_WORKSPACE/app-build/my-demo-app.apk"
+
+      - name: Build Allure report
+        if: ${{ !cancelled() }}
+        run: npx --yes allure-commandline@2 generate mobile/results/allure-results --clean -o mobile/results/allure-report
+
+      - name: Upload test results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-test-results
+          # ผลรวมของทุกเครื่องมือ + screenshot ตอนเทสล้มของ pytest
+          path: |
+            mobile/results/
+            mobile/appium/results/
+          retention-days: 30
+          if-no-files-found: warn
