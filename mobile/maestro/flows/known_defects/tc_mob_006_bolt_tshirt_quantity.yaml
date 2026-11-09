@@ -6,10 +6,7 @@ tags:
 ---
 # [Negative / Defect] เพิ่ม Bolt T-Shirt 1 ชิ้น badge ต้องแสดง 1
 # flow นี้คาดว่าจะ FAIL จนกว่าบั๊กจะถูกแก้ จึงแยกไว้นอกชุดหลัก (config.yaml ไม่รวมโฟลเดอร์นี้)
-- launchApp:
-    clearState: true
-# รอหน้า Products พร้อม (ปิด dialog ของระบบถ้ามี)
-- runFlow: ../subflows/wait_app_ready.yaml
+- runFlow: ../subflows/launch_app.yaml
 # แอปแครชเมื่อแตะสินค้าลำดับที่ 7 ขึ้นไป (BUG-005) จึงเรียงตามราคาก่อน ให้ Bolt T-Shirt ขึ้นมาอยู่ลำดับที่ 3
 - tapOn: "Shows current sorting order and displays available sorting options"
 - tapOn: "Ascending order by price"

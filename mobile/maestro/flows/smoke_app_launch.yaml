@@ -1,0 +1,9 @@
+appId: com.saucelabs.mydemoapp.android
+name: "SMOKE App launches to Products screen"
+tags:
+  - smoke
+---
+# [Smoke] เปิดแอปแล้วต้องเห็นหน้า Products (ผ่าน Splash screen และ pop-up ของระบบ) ใช้ตรวจว่า build และ emulator พร้อมก่อนรันชุดเต็ม
+- runFlow: subflows/launch_app.yaml
+- assertVisible: "Displays all products of catalog"
+- takeScreenshot: smoke_app_launch

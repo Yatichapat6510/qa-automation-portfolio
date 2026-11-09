@@ -1,0 +1,10 @@
+appId: com.saucelabs.mydemoapp.android
+---
+# Subflow: จุดเริ่มต้นมาตรฐานของทุกเทสต์ เปิดแอปด้วย state สะอาดและรอจนหน้า Products พร้อม
+# ให้สิทธิ์ทั้งหมดตอนเปิดแอป (pm grant) เพื่อกัน permission dialog ตั้งแต่ต้นทาง
+# ส่วน pop-up ที่หลุดมาได้ (dialog ของระบบ) ถูกจัดการต่อใน wait_app_ready.yaml
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- runFlow: wait_app_ready.yaml

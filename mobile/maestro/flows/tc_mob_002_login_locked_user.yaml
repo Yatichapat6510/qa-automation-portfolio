@@ -3,14 +3,17 @@ name: "TC-MOB-002 Login with locked-out user"
 tags:
   - login
   - negative
+onFlowStart:
+  # โหลดข้อมูลผู้ใช้ทดสอบจาก data/test_users.js ก่อนเริ่ม flow
+  - runScript: ../data/test_users.js
 ---
 # [Negative] บัญชีที่ถูกล็อกต้องแสดง error และไม่เข้าสู่ระบบ
 - runFlow: subflows/open_login.yaml
 - runFlow:
     file: subflows/submit_login.yaml
     env:
-      USERNAME: "alice@example.com"
-      PASSWORD: "10203040"
+      USERNAME: ${output.users.locked.username}
+      PASSWORD: ${output.users.locked.password}
 # ข้อความ error แสดงใต้ช่อง Password (text เป็น regex จึง escape จุดท้ายประโยค)
 - assertVisible:
     id: "passwordErrorTV"

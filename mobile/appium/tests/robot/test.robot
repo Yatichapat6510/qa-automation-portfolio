@@ -1,5 +1,5 @@
 *** Settings ***
-Resource          ../resources/common_android.resource
+Resource          ../../resources/common_android.resource
 Suite Setup       Open Android Application
 Suite Teardown    Close Android Application
 
