@@ -5,10 +5,7 @@ tags:
   - cart
 ---
 # [Positive / Edge] เพิ่ม Sauce Labs Backpack จำนวน 2 ชิ้น แล้วตรวจ badge และหน้า My Cart
-- launchApp:
-    clearState: true
-# รอหน้า Products พร้อม (ปิด dialog ของระบบถ้ามี)
-- runFlow: subflows/wait_app_ready.yaml
+- runFlow: subflows/launch_app.yaml
 # ค่าเริ่มต้นเรียงสินค้าตามชื่อ A→Z ทำให้ Backpack เป็นรูปแรกเสมอ (แอปรับการแตะที่รูปเท่านั้น)
 - tapOn:
     id: "productIV"

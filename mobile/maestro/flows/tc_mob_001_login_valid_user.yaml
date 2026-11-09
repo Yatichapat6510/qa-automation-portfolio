@@ -3,14 +3,17 @@ name: "TC-MOB-001 Login with valid credentials"
 tags:
   - smoke
   - login
+onFlowStart:
+  # โหลดข้อมูลผู้ใช้ทดสอบจาก data/test_users.js ก่อนเริ่ม flow
+  - runScript: ../data/test_users.js
 ---
 # [Positive] Login ด้วยบัญชีที่ถูกต้อง แล้วต้องกลับมาหน้า Products ในสถานะ login แล้ว
 - runFlow: subflows/open_login.yaml
 - runFlow:
     file: subflows/submit_login.yaml
     env:
-      USERNAME: "bod@example.com"
-      PASSWORD: "10203040"
+      USERNAME: ${output.users.valid.username}
+      PASSWORD: ${output.users.valid.password}
 # login สำเร็จแอปจะเปิดหน้า Products ใหม่ รอให้หน้า Login หายก่อนเพื่อไม่ให้กดเมนูระหว่างเปลี่ยนหน้า
 - extendedWaitUntil:
     notVisible: "Tap to login with given credentials"

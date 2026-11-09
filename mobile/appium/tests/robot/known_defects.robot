@@ -3,11 +3,11 @@ Documentation     เคสที่ยืนยัน defect ที่รู้
 ...               ถ้าบั๊กยังอยู่ ผลจะเป็น SKIP พร้อมข้อความ ไม่ทำให้ CI แดง
 ...               เฉพาะขั้นตรวจผลสุดท้ายเท่านั้นที่แปลงเป็น SKIP ถ้าล้มตั้งแต่ setup หรือหา element ไม่เจอ จะยังเป็น FAIL
 ...               ถ้าวันหนึ่งบั๊กถูกแก้ เคสจะ PASS ซึ่งเป็นสัญญาณให้ย้ายเคสเข้าชุดหลัก
-Resource          ../resources/common_android.resource
-Resource          ../resources/test_data.resource
-Resource          ../resources/pages/header_bar.resource
-Resource          ../resources/pages/catalog_page.resource
-Resource          ../resources/pages/product_detail_page.resource
+Resource          ../../resources/common_android.resource
+Resource          ../../resources/test_data.resource
+Resource          ../../resources/pages/header_bar.resource
+Resource          ../../resources/pages/catalog_page.resource
+Resource          ../../resources/pages/product_detail_page.resource
 Suite Setup       Open Android Application
 Suite Teardown    Close Android Application
 Test Setup        Restart App With Clean State

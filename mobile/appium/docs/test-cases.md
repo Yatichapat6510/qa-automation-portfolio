@@ -4,7 +4,7 @@
 | --- | --- |
 | แอปที่ทดสอบ | Sauce Labs My Demo App (`com.saucelabs.mydemoapp.android`) |
 | แพลตฟอร์ม | Android Emulator Pixel 7 API 34 (`emulator-5554`), UiAutomator2 / Maestro 2.8 |
-| รันล่าสุด | 2026-11-04 แอปรุ่น 2.2.0: pytest 5 passed + 1 xfailed, Robot 6 passed + 1 skipped, Maestro 5/5 passed (TC-MOB-006 fail ตามที่คาด) |
+| รันล่าสุด | 2026-11-09 แอปรุ่น 2.2.0: pytest 5 passed + 1 xfailed, Robot 6 passed + 1 skipped, Maestro 6/6 passed (smoke + TC-001–005) และ TC-MOB-006 fail ตามที่คาด |
 | ขอบเขต | Login (Positive / Negative / Edge), การเพิ่มสินค้าลงตะกร้า และ defect ที่พบ 1 รายการ |
 | Automation | Appium + pytest และ Appium + Robot Framework (`mobile/appium/tests/`), Maestro (`mobile/maestro/flows/`) |
 
@@ -32,12 +32,12 @@
 
 | Test Case ID | Appium (pytest) | Appium (Robot Framework) | Maestro Flow |
 | --- | --- | --- | --- |
-| TC-MOB-001 | `tests/test_login.py::test_tc_mob_001_login_with_valid_credentials` | `tests/login.robot` | `flows/tc_mob_001_login_valid_user.yaml` |
-| TC-MOB-002 | `tests/test_login.py::test_login_shows_validation_error[TC-MOB-002-locked-out-user]` | `tests/login.robot` | `flows/tc_mob_002_login_locked_user.yaml` |
-| TC-MOB-003 | `tests/test_login.py::test_login_shows_validation_error[TC-MOB-003-empty-password]` | `tests/login.robot` | `flows/tc_mob_003_login_empty_password.yaml` |
-| TC-MOB-004 | `tests/test_login.py::test_login_shows_validation_error[TC-MOB-004-whitespace-username]` | `tests/login.robot` | `flows/tc_mob_004_login_whitespace_username.yaml` |
-| TC-MOB-005 | `tests/test_cart.py::test_tc_mob_005_add_product_with_quantity_updates_cart` | `tests/cart.robot` | `flows/tc_mob_005_add_to_cart_quantity.yaml` |
-| TC-MOB-006 | `tests/test_known_defects.py` (xfail strict) | `tests/known_defects.robot` (Known Defect Check) | `flows/known_defects/tc_mob_006_bolt_tshirt_quantity.yaml` (รันแยก) |
+| TC-MOB-001 | `tests/py/test_login.py::test_tc_mob_001_login_with_valid_credentials` | `tests/robot/login.robot` | `flows/tc_mob_001_login_valid_user.yaml` |
+| TC-MOB-002 | `tests/py/test_login.py::test_login_shows_validation_error[TC-MOB-002-locked-out-user]` | `tests/robot/login.robot` | `flows/tc_mob_002_login_locked_user.yaml` |
+| TC-MOB-003 | `tests/py/test_login.py::test_login_shows_validation_error[TC-MOB-003-empty-password]` | `tests/robot/login.robot` | `flows/tc_mob_003_login_empty_password.yaml` |
+| TC-MOB-004 | `tests/py/test_login.py::test_login_shows_validation_error[TC-MOB-004-whitespace-username]` | `tests/robot/login.robot` | `flows/tc_mob_004_login_whitespace_username.yaml` |
+| TC-MOB-005 | `tests/py/test_cart.py::test_tc_mob_005_add_product_with_quantity_updates_cart` | `tests/robot/cart.robot` | `flows/tc_mob_005_add_to_cart_quantity.yaml` |
+| TC-MOB-006 | `tests/py/test_known_defects.py` (xfail strict) | `tests/robot/known_defects.robot` (Known Defect Check) | `flows/known_defects/tc_mob_006_bolt_tshirt_quantity.yaml` (รันแยก) |
 
 ## Defect ที่พบระหว่างรันจริง
 

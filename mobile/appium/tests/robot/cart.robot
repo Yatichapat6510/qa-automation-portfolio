@@ -1,11 +1,11 @@
 *** Settings ***
 Documentation     ทดสอบการเพิ่มสินค้าลงตะกร้า: TC-MOB-005 (รายละเอียดใน docs/test-cases.md)
-Resource          ../resources/common_android.resource
-Resource          ../resources/test_data.resource
-Resource          ../resources/pages/header_bar.resource
-Resource          ../resources/pages/catalog_page.resource
-Resource          ../resources/pages/product_detail_page.resource
-Resource          ../resources/pages/cart_page.resource
+Resource          ../../resources/common_android.resource
+Resource          ../../resources/test_data.resource
+Resource          ../../resources/pages/header_bar.resource
+Resource          ../../resources/pages/catalog_page.resource
+Resource          ../../resources/pages/product_detail_page.resource
+Resource          ../../resources/pages/cart_page.resource
 Suite Setup       Open Android Application
 Suite Teardown    Close Android Application
 Test Setup        Restart App With Clean State
