@@ -12,9 +12,11 @@ ${ADD_TO_CART_BUTTON}          android=new UiScrollable(new UiSelector().scrolla
 *** Keywords ***
 Product Detail Should Show
     [Documentation]    ยืนยันว่าเปิดสินค้าถูกตัว ไม่ใช่แค่เปิดหน้ารายละเอียดได้
+    ...    หน้า Products ก็มี element id productTV (หัวข้อ "Products") เหมือนกัน ระหว่างเปลี่ยนหน้าอาจเจอของหน้าเก่า
+    ...    แล้ว element กลายเป็น stale จึงตรวจข้อความแบบวนซ้ำจนตรง (เทียบเท่า text_to_be_present_in_element ฝั่ง pytest)
     [Arguments]    ${product_name}
-    Wait Until Element Is Visible    ${PRODUCT_TITLE}    ${TIMEOUT}
-    Element Text Should Be    ${PRODUCT_TITLE}    ${product_name}
+    Wait Until Keyword Succeeds    ${TIMEOUT}    0.5s
+    ...    Element Text Should Be    ${PRODUCT_TITLE}    ${product_name}
 
 Set Product Quantity
     [Documentation]    กดปุ่ม + จนจำนวนเท่ากับค่าที่ต้องการ โดยรอตัวเลขอัปเดตทีละขั้น
