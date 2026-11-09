@@ -1,0 +1,37 @@
+appId: com.saucelabs.mydemoapp.android
+---
+# Subflow: ปิด pop-up ของระบบที่อาจเด้งทับแอประหว่างทดสอบ โดยไม่ทำให้เทสต์ล้มถ้าไม่มี pop-up
+# ใช้ `when: visible` ตรวจก่อนแตะ (ตรวจแล้วจบทันที) แทน `optional: true` ที่ต้องรอ timeout ของการหา element
+# ทุกครั้งที่ไม่เจอ จึงเรียก subflow นี้ซ้ำได้โดยแทบไม่เสียเวลา
+#
+# จงใจ "ไม่" ปิด dialog แครช (App keeps stopping) และ ANR เพราะเป็นสัญญาณว่าแอปมีบั๊กจริง
+# (เช่น BUG-005) การกดปิดจะบังผลและทำให้เทสต์ผ่านทั้งที่ไม่ควรผ่าน
+
+# 1) Android 15 ขึ้นไปแจ้งว่าแอปยังไม่รองรับ memory page 16 KB
+#    กด "Don't Show Again" ใช้ id เพราะเครื่องหมาย ' อาจต่างกันตามรุ่น Android
+- runFlow:
+    when:
+      visible: "Android App Compatibility"
+    commands:
+      - tapOn:
+          id: "android:id/button1"
+
+# 2) Runtime permission (กล้อง ตำแหน่ง การแจ้งเตือน ฯลฯ) ของ Permission Controller
+#    ตัวอย่าง: เมนู Geo Location ของแอปขอสิทธิ์ตำแหน่ง ปุ่มที่เจอมี 2 แบบตามประเภทสิทธิ์
+- runFlow:
+    when:
+      visible:
+        id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+    commands:
+      - tapOn:
+          id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+- runFlow:
+    when:
+      visible:
+        id: "com.android.permissioncontroller:id/permission_allow_button"
+    commands:
+      - tapOn:
+          id: "com.android.permissioncontroller:id/permission_allow_button"
+
+# 3) ถ้าจะรองรับ pop-up ใหม่ (เช่น app rating prompt) ให้เพิ่ม block `runFlow: when:` ที่นี่
+#    โดยอ้างด้วย id หรือข้อความเฉพาะของ dialog นั้น ห้ามใช้ข้อความกว้างๆ เช่น "OK" เพราะอาจไปกดปุ่มของแอป

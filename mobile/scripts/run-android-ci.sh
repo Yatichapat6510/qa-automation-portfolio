@@ -26,7 +26,7 @@ for _ in $(seq 1 30); do
 done
 
 echo "::group::pytest"
-(cd "$REPO_ROOT/mobile/appium" && python -m pytest \
+(cd "$REPO_ROOT/mobile/appium" && python -m pytest tests/py \
   --alluredir="$ALLURE_RESULTS" \
   --junitxml="$RESULTS/pytest-junit.xml") || status=1
 echo "::endgroup::"
@@ -35,7 +35,7 @@ echo "::group::Robot Framework"
 python -m robot \
   --outputdir "$RESULTS/robot" \
   --listener "allure_robotframework;$ALLURE_RESULTS" \
-  "$REPO_ROOT/mobile/appium/tests" || status=1
+  "$REPO_ROOT/mobile/appium/tests/robot" || status=1
 echo "::endgroup::"
 
 # ปิด Appium และหยุด UiAutomator2 server ก่อนรัน Maestro เพราะทั้งสองใช้ UiAutomation ตัวเดียวกันพร้อมกันไม่ได้
@@ -45,12 +45,12 @@ adb shell am force-stop io.appium.uiautomator2.server.test || true
 adb shell am force-stop "$APP_PACKAGE" || true
 
 echo "::group::Maestro"
-# --test-output-dir ทำให้ screenshot จาก takeScreenshot และ log อยู่ที่เดียวกับรายงาน (ค่าเริ่มต้นของ Maestro 2.x คือ ~/.maestro/tests)
-maestro test "$REPO_ROOT/mobile/maestro/flows" \
-  --test-output-dir "$RESULTS/maestro" \
-  --format junit --output "$RESULTS/maestro/maestro-junit.xml" || status=1
-# Allure อ่านไฟล์ JUnit XML ได้ จึงคัดลอกผล Maestro เข้าไปรวมในรายงานเดียวกัน
-cp "$RESULTS/maestro/maestro-junit.xml" "$ALLURE_RESULTS/" 2>/dev/null || true
+# ใช้สคริปต์เดียวกับที่รันบนเครื่อง local: ชุดหลัก (smoke + tc_*) มีผลต่อ exit code ส่วน known defect รันแยกและไม่นับเป็น fail
+bash "$REPO_ROOT/mobile/maestro/scripts/run_tests.sh" || status=1
+# ย้ายผล Maestro (JUnit, screenshot, log) มารวมกับ artifact ของ CI
+cp -r "$REPO_ROOT/mobile/maestro/results/." "$RESULTS/maestro/" 2>/dev/null || true
+# Allure อ่านไฟล์ JUnit XML ได้ จึงคัดลอกผลชุดหลักของ Maestro เข้าไปรวมในรายงานเดียวกัน
+cp "$RESULTS/maestro/report.xml" "$ALLURE_RESULTS/maestro-junit.xml" 2>/dev/null || true
 echo "::endgroup::"
 
 exit "$status"

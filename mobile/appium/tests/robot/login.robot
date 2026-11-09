@@ -1,10 +1,10 @@
 *** Settings ***
 Documentation     ทดสอบหน้า Login: TC-MOB-001 ถึง TC-MOB-004 (รายละเอียดใน docs/test-cases.md)
-Resource          ../resources/common_android.resource
-Resource          ../resources/test_data.resource
-Resource          ../resources/pages/header_bar.resource
-Resource          ../resources/pages/login_page.resource
-Resource          ../resources/pages/catalog_page.resource
+Resource          ../../resources/common_android.resource
+Resource          ../../resources/test_data.resource
+Resource          ../../resources/pages/header_bar.resource
+Resource          ../../resources/pages/login_page.resource
+Resource          ../../resources/pages/catalog_page.resource
 Suite Setup       Open Android Application
 Suite Teardown    Close Android Application
 Test Setup        Restart App With Clean State

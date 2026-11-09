@@ -1,18 +1,12 @@
 appId: com.saucelabs.mydemoapp.android
 ---
-# Subflow: รอจนหน้า Products พร้อม และปิด dialog ความเข้ากันได้ของระบบถ้าเด้งขึ้น
-# Android 15 ขึ้นไปแสดง dialog "Android App Compatibility" กับแอปที่ยังไม่รองรับ memory page 16 KB
-# รอให้เห็นอย่างใดอย่างหนึ่งก่อน (text เป็น regex จึงใช้ | ได้)
+# Subflow: รอจนหน้า Products พร้อม โดยปิด pop-up ของระบบที่เด้งขึ้นมาก่อน
+# dialog ของระบบทับหน้าแอป ทำให้ Maestro มองไม่เห็น element ของแอป จึงรอให้เห็น "อย่างใดอย่างหนึ่ง" ก่อน
+# (text เป็น regex จึงใช้ | ได้) แล้วค่อยปิด pop-up และรอหน้า Products อีกรอบ
 - extendedWaitUntil:
-    visible: "Displays all products of catalog|Android App Compatibility"
+    visible: "Displays all products of catalog|Android App Compatibility|.*Allow.*"
     timeout: 15000
-- runFlow:
-    when:
-      visible: "Android App Compatibility"
-    commands:
-      # กด "Don't Show Again" ใช้ id เพราะเครื่องหมาย ' อาจต่างกันตามรุ่น Android
-      - tapOn:
-          id: "android:id/button1"
+- runFlow: dismiss_system_popups.yaml
 - extendedWaitUntil:
     visible: "Displays all products of catalog"
     timeout: 15000

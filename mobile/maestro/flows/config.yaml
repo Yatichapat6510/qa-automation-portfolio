@@ -1,3 +1,9 @@
-# Workspace config: รันเฉพาะไฟล์ test case ในโฟลเดอร์นี้ (subflows ถูกเรียกผ่าน runFlow เท่านั้น)
+# Workspace config: รันเฉพาะไฟล์ test case ในโฟลเดอร์นี้ (subflows และ known_defects ถูกเรียกแยกต่างหาก)
 flows:
+  - "smoke_*.yaml"
   - "tc_*.yaml"
+# smoke ต้องรันก่อน ถ้า build หรือ emulator มีปัญหาจะรู้ตั้งแต่เทสต์แรก
+executionOrder:
+  continueOnFailure: true
+  flowsOrder:
+    - smoke_app_launch

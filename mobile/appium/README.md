@@ -21,11 +21,9 @@ mobile/appium/
 │   ├── test_data.resource        # บัญชีเดโมและชื่อสินค้า
 │   └── pages/                    # Page Object ฝั่ง Robot Framework
 ├── tests/
-│   ├── test_login.py / login.robot           # TC-MOB-001 ถึง 004
-│   ├── test_cart.py / cart.robot             # TC-MOB-005
-│   ├── test_known_defects.py / known_defects.robot   # TC-MOB-006 (BUG-004)
-│   ├── test.robot                # smoke: เปิดแอปได้
-│   └── test_smoke.py             # สคริปต์เช็คว่าเปิด session ได้ (pytest ไม่เก็บไปรัน)
+│   ├── py/                       # pytest: test_login (TC-001–004), test_cart (TC-005), test_known_defects (TC-006)
+│   │                             #   + test_smoke.py สคริปต์เช็คว่าเปิด session ได้ (pytest ไม่เก็บไปรัน)
+│   └── robot/                    # Robot Framework: login, cart, known_defects, test (smoke)
 ├── docs/test-cases.md
 ├── pytest.ini
 └── requirements.txt
@@ -45,12 +43,12 @@ mobile/appium/
 
 ```bash
 # pytest
-pytest mobile/appium/tests                 # รันทั้งชุด
-pytest mobile/appium/tests -m smoke        # รันเฉพาะ smoke
+pytest mobile/appium/tests/py                 # รันทั้งชุด
+pytest mobile/appium/tests/py -m smoke        # รันเฉพาะ smoke
 
 # Robot Framework
-robot -d mobile/appium/results/robot mobile/appium/tests
-robot -d mobile/appium/results/robot -i smoke mobile/appium/tests
+robot -d mobile/appium/results/robot mobile/appium/tests/robot
+robot -d mobile/appium/results/robot -i smoke mobile/appium/tests/robot
 ```
 
 - เปลี่ยนอุปกรณ์ได้ด้วย env var `ANDROID_DEVICE_NAME` (pytest) หรือ `-v DEVICE_NAME:<ชื่อ>` (Robot)
